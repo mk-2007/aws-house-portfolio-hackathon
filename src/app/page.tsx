@@ -1,0 +1,40 @@
+"use client";
+
+import SceneRoot from "@/components/scene/SceneRoot";
+import WelcomeScreen from "@/components/welcome/WelcomeScreen";
+import NavigationMenu from "@/components/hud/NavigationMenu";
+import ArcLookControl from "@/components/hud/ArcLookControl";
+import KeyboardControls from "@/components/hud/KeyboardControls";
+import RenderErrorBanner from "@/components/hud/RenderErrorBanner";
+import ProjectDetailOverlay from "@/components/hud/ProjectDetailOverlay";
+import AboutObjectOverlay from "@/components/hud/AboutObjectOverlay";
+import { useAppStore } from "@/store/appStore";
+import { useSpaceStore } from "@/store/spaceStore";
+
+export default function Home() {
+  const stage = useAppStore((s) => s.stage);
+  const space = useSpaceStore((s) => s.space);
+  const inHouse = stage === "corridor"; // past the welcome door
+
+  return (
+    <main className="relative flex-1 min-h-0 flex flex-col">
+      {stage === "welcome" && <WelcomeScreen />}
+      {/* Corridor stays mounted the whole time — no reload when the
+          welcome screen fades away, it's just been covered until now. */}
+      <div className="flex-1">
+        <SceneRoot />
+      </div>
+      {/* Navigation is menu-driven everywhere: the room-select "directory
+          board" in the corridor, exit/jump-to-room actions inside any
+          room — same component, consistent styling either way. The arc
+          look control only applies inside a room (rooms have zero
+          translation, corridor has zero free-look). */}
+      {inHouse && <NavigationMenu />}
+      {inHouse && space !== "corridor" && <ArcLookControl />}
+      {inHouse && <KeyboardControls />}
+      <ProjectDetailOverlay />
+      <AboutObjectOverlay />
+      <RenderErrorBanner />
+    </main>
+  );
+}
