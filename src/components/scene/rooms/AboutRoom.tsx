@@ -77,28 +77,29 @@ function ExitDoor() {
   );
 }
 
-/** Framed Portrait 1 (Back Wall): About Me & The Journey */
+/** Framed Portrait (FRONT Wall, left of door): About Me & The Journey */
 function AboutMePortrait() {
   return (
     <FramedWallPortrait
-      position={[0, 2.15, -ABOUT_HALF + 0.08]}
-      frameWidth={4.4}
+      position={[-2.2, 2.15, ABOUT_HALF - 0.08]}
+      rotation={[0, Math.PI, 0]}
+      frameWidth={3.6}
       frameHeight={3.2}
       woodColor="#2e1e12"
     >
       <div
         className="bg-[var(--color-paper)] text-[var(--color-ink)] p-7 border border-[var(--color-ink)]/30"
         style={{
-          width: "520px",
+          width: "440px",
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
-          <span>Room 04 &bull; Biography &amp; Story</span>
-          <span>The Developer&apos;s Mindset</span>
+        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+          <span>Room 04 &bull; Biography</span>
+          <span>The Developer</span>
         </div>
 
-        <h1 className="font-[family-name:var(--font-bacley)] text-2xl md:text-3xl font-bold tracking-wide mb-1">
+        <h1 className="font-[family-name:var(--font-bacley)] text-3xl font-bold tracking-wide mb-1">
           ABOUT MAHANDAR
         </h1>
 
@@ -106,7 +107,7 @@ function AboutMePortrait() {
           &ldquo;Passionate about turning curiosity into resilient, impactful software.&rdquo;
         </p>
 
-        <div className="text-xs leading-relaxed text-[var(--color-ink)]/90 space-y-2.5 pt-2 border-t border-[var(--color-ink)]/20">
+        <div className="text-sm leading-relaxed text-[var(--color-ink)]/90 space-y-2.5 pt-2 border-t border-[var(--color-ink)]/20">
           <p>
             Whether it&apos;s architecting intelligent RAG agents, designing high-throughput backend services,
             or solving competitive programming challenges, I am constantly exploring the bleeding edge
@@ -126,7 +127,7 @@ function AboutMePortrait() {
   );
 }
 
-/** Framed Portrait 2 (Left Wall): Contact & Social Inquiries */
+/** Framed Portrait (Left Wall): Contact & Social Inquiries */
 function ContactPortrait() {
   return (
     <FramedWallPortrait
@@ -143,42 +144,42 @@ function ContactPortrait() {
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
           <span>Get in Touch &bull; Open for Opportunities</span>
           <span>Channels</span>
         </div>
 
-        <h2 className="font-[family-name:var(--font-bacley)] text-2xl font-bold tracking-wide mb-1">
+        <h2 className="font-[family-name:var(--font-bacley)] text-3xl font-bold tracking-wide mb-1">
           CONNECT &amp; SOCIALS
         </h2>
-        <p className="font-[family-name:var(--font-spirtush)] text-xs text-[var(--color-ink)]/75 italic mb-3">
+        <p className="font-[family-name:var(--font-spirtush)] text-sm text-[var(--color-ink)]/75 italic mb-3">
           Click any channel to open in a new tab or send an email.
         </p>
 
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2.5 text-sm">
           <a
             href="mailto:mk6447959@gmail.com"
-            className="flex items-center justify-between p-2.5 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
+            className="flex items-center justify-between p-3 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
           >
             <div className="flex items-center gap-2">
-              <TbMail className="text-[var(--color-masthead)] text-base" />
+              <TbMail className="text-[var(--color-masthead)] text-lg" />
               <span className="font-[family-name:var(--font-bacley)] font-bold">Email</span>
             </div>
-            <span className="font-mono text-[11px] text-[var(--color-ink)]/80">mk6447959@gmail.com</span>
+            <span className="font-mono text-xs text-[var(--color-ink)]/80">mk6447959@gmail.com</span>
           </a>
 
           <a
             href="https://github.com/mk-2007"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-2.5 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
+            className="flex items-center justify-between p-3 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
           >
             <div className="flex items-center gap-2">
-              <TbBrandGithub className="text-[var(--color-ink)] text-base" />
+              <TbBrandGithub className="text-[var(--color-ink)] text-lg" />
               <span className="font-[family-name:var(--font-bacley)] font-bold">GitHub</span>
             </div>
-            <span className="font-mono text-[11px] text-[var(--color-ink)]/80 flex items-center gap-1">
-              mk-2007 <TbExternalLink size={12} />
+            <span className="font-mono text-xs text-[var(--color-ink)]/80 flex items-center gap-1">
+              mk-2007 <TbExternalLink size={14} />
             </span>
           </a>
 
@@ -186,14 +187,14 @@ function ContactPortrait() {
             href="https://www.linkedin.com/in/mahandarkhatri"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-2.5 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
+            className="flex items-center justify-between p-3 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
           >
             <div className="flex items-center gap-2">
-              <TbBrandLinkedin className="text-[#0077b5] text-base" />
+              <TbBrandLinkedin className="text-[#0077b5] text-lg" />
               <span className="font-[family-name:var(--font-bacley)] font-bold">LinkedIn</span>
             </div>
-            <span className="font-mono text-[11px] text-[var(--color-ink)]/80 flex items-center gap-1">
-              mahandarkhatri <TbExternalLink size={12} />
+            <span className="font-mono text-xs text-[var(--color-ink)]/80 flex items-center gap-1">
+              mahandarkhatri <TbExternalLink size={14} />
             </span>
           </a>
 
@@ -201,14 +202,14 @@ function ContactPortrait() {
             href="https://codeforces.com/profile/_gazzy284"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-2.5 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
+            className="flex items-center justify-between p-3 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
           >
             <div className="flex items-center gap-2">
-              <TbCode className="text-[#a8791f] text-base" />
+              <TbCode className="text-[#a8791f] text-lg" />
               <span className="font-[family-name:var(--font-bacley)] font-bold">Codeforces</span>
             </div>
-            <span className="font-mono text-[11px] text-[var(--color-ink)]/80 flex items-center gap-1">
-              _gazzy284 <TbExternalLink size={12} />
+            <span className="font-mono text-xs text-[var(--color-ink)]/80 flex items-center gap-1">
+              _gazzy284 <TbExternalLink size={14} />
             </span>
           </a>
 
@@ -216,14 +217,14 @@ function ContactPortrait() {
             href="https://leetcode.com/u/struck_high/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-2.5 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
+            className="flex items-center justify-between p-3 bg-[#f5f0e6] hover:bg-[var(--color-masthead)]/15 border border-[var(--color-ink)]/20 transition-colors rounded text-[var(--color-ink)]"
           >
             <div className="flex items-center gap-2">
-              <TbFileText className="text-[#ffa116] text-base" />
+              <TbFileText className="text-[#ffa116] text-lg" />
               <span className="font-[family-name:var(--font-bacley)] font-bold">LeetCode</span>
             </div>
-            <span className="font-mono text-[11px] text-[var(--color-ink)]/80 flex items-center gap-1">
-              struck_high <TbExternalLink size={12} />
+            <span className="font-mono text-xs text-[var(--color-ink)]/80 flex items-center gap-1">
+              struck_high <TbExternalLink size={14} />
             </span>
           </a>
         </div>
@@ -232,7 +233,7 @@ function ContactPortrait() {
   );
 }
 
-/** Framed Portrait 3 (Right Wall): Resume & Credentials Download */
+/** Framed Portrait (Right Wall): Resume & Credentials Download */
 function ResumePortrait() {
   return (
     <FramedWallPortrait
@@ -251,26 +252,26 @@ function ResumePortrait() {
         }}
       >
         <div>
-          <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+          <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
             <span>Curriculum Vitae &bull; 2025</span>
             <span>Official Document</span>
           </div>
 
-          <h2 className="font-[family-name:var(--font-bacley)] text-2xl font-bold tracking-wide mb-1">
+          <h2 className="font-[family-name:var(--font-bacley)] text-3xl font-bold tracking-wide mb-1">
             RESUME &amp; CREDENTIALS
           </h2>
-          <p className="font-[family-name:var(--font-spirtush)] text-xs text-[var(--color-ink)]/75 italic mb-3">
+          <p className="font-[family-name:var(--font-spirtush)] text-sm text-[var(--color-ink)]/75 italic mb-3">
             Overview of experience, achievements, and technical capabilities.
           </p>
 
-          <div className="space-y-2 text-xs text-[var(--color-ink)]/85 mb-3">
-            <div className="p-2 bg-[var(--color-ink)]/5 border-l-2 border-[var(--color-masthead)] rounded-r">
-              <p className="font-bold text-[11px]">Key Competencies</p>
-              <p className="text-[10.5px]">AI Agent Workflows, RAG Architectures, FastAPI, Python, C++, SQL.</p>
+          <div className="space-y-2.5 text-sm text-[var(--color-ink)]/85 mb-3">
+            <div className="p-2.5 bg-[var(--color-ink)]/5 border-l-2 border-[var(--color-masthead)] rounded-r">
+              <p className="font-bold text-xs">Key Competencies</p>
+              <p className="text-xs">AI Agent Workflows, RAG Architectures, FastAPI, Python, C++, SQL.</p>
             </div>
-            <div className="p-2 bg-[var(--color-ink)]/5 border-l-2 border-[#a8791f] rounded-r">
-              <p className="font-bold text-[11px]">Academic &amp; Project Track Record</p>
-              <p className="text-[10.5px]">Demonstrated full-stack 3D applications, hackathons, &amp; algorithms.</p>
+            <div className="p-2.5 bg-[var(--color-ink)]/5 border-l-2 border-[#a8791f] rounded-r">
+              <p className="font-bold text-xs">Academic &amp; Project Track Record</p>
+              <p className="text-xs">Demonstrated full-stack 3D applications, hackathons, &amp; algorithms.</p>
             </div>
           </div>
         </div>
@@ -279,18 +280,18 @@ function ResumePortrait() {
           <a
             href="/mahandar-kumar-resume.pdf"
             download="Mahandar_Kumar_Resume.pdf"
-            className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[var(--color-masthead)] text-white hover:bg-[#5a1b16] transition-colors text-xs font-[family-name:var(--font-bacley)] tracking-wider uppercase font-bold rounded shadow-md"
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-[var(--color-masthead)] text-white hover:bg-[#5a1b16] transition-colors text-sm font-[family-name:var(--font-bacley)] tracking-wider uppercase font-bold rounded shadow-md"
           >
-            <TbDownload size={16} />
+            <TbDownload size={18} />
             Download Official Resume (PDF)
           </a>
           <a
             href="/mahandar-kumar-resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 py-1 text-[11px] text-[var(--color-ink)]/75 hover:text-[var(--color-ink)] font-mono"
+            className="flex items-center justify-center gap-1.5 py-1 text-xs text-[var(--color-ink)]/75 hover:text-[var(--color-ink)] font-mono"
           >
-            <TbExternalLink size={12} />
+            <TbExternalLink size={14} />
             View in Browser Tab
           </a>
         </div>
@@ -357,6 +358,92 @@ function ExecutiveDesk({ position }: { position: [number, number, number] }) {
   );
 }
 
+/** Decorative Wall Clock on the Back Wall */
+function WallClock({ position }: { position: [number, number, number] }) {
+  return (
+    <group position={position}>
+      {/* Clock body */}
+      <mesh castShadow>
+        <cylinderGeometry args={[0.45, 0.45, 0.06, 32]} />
+        <meshStandardMaterial color={WOOD_DARK} roughness={0.7} />
+      </mesh>
+      {/* Clock face */}
+      <mesh position={[0, 0, 0.035]} rotation={[0, 0, 0]}>
+        <circleGeometry args={[0.4, 32]} />
+        <meshStandardMaterial color="#f5f0e6" roughness={0.6} />
+      </mesh>
+      {/* Brass rim */}
+      <mesh>
+        <torusGeometry args={[0.45, 0.025, 12, 48]} />
+        <meshStandardMaterial color={BRASS} metalness={0.8} roughness={0.2} />
+      </mesh>
+      {/* Hour hand */}
+      <mesh position={[0, 0.08, 0.04]} rotation={[0, 0, -0.5]}>
+        <boxGeometry args={[0.015, 0.2, 0.01]} />
+        <meshStandardMaterial color="#1a1510" />
+      </mesh>
+      {/* Minute hand */}
+      <mesh position={[0.05, 0.12, 0.04]} rotation={[0, 0, -1.2]}>
+        <boxGeometry args={[0.01, 0.28, 0.01]} />
+        <meshStandardMaterial color="#1a1510" />
+      </mesh>
+      {/* Center pin */}
+      <mesh position={[0, 0, 0.045]}>
+        <sphereGeometry args={[0.02, 12, 12]} />
+        <meshStandardMaterial color={BRASS} metalness={0.8} roughness={0.2} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Luxury Area Rug */
+function RoomRug() {
+  return (
+    <group position={[0, 0.006, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[5, 5]} />
+        <meshStandardMaterial color="#38251e" roughness={0.9} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]} receiveShadow>
+        <planeGeometry args={[4.6, 4.6]} />
+        <meshStandardMaterial color="#4e3328" roughness={0.85} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]} receiveShadow>
+        <planeGeometry args={[4.2, 4.2]} />
+        <meshStandardMaterial color="#2d1c16" roughness={0.8} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Small Side Table */
+function SideTable({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  return (
+    <group position={position} rotation={[0, rotationY, 0]}>
+      {/* Top */}
+      <mesh position={[0, 0.55, 0]} castShadow>
+        <cylinderGeometry args={[0.28, 0.28, 0.04, 16]} />
+        <meshStandardMaterial color={DESK_COLOR} roughness={0.7} />
+      </mesh>
+      {/* Stem */}
+      <mesh position={[0, 0.28, 0]} castShadow>
+        <cylinderGeometry args={[0.03, 0.03, 0.52, 10]} />
+        <meshStandardMaterial color={BRASS} metalness={0.8} roughness={0.2} />
+      </mesh>
+      {/* Base */}
+      <mesh position={[0, 0.02, 0]}>
+        <cylinderGeometry args={[0.2, 0.22, 0.04, 16]} />
+        <meshStandardMaterial color={WOOD_DARK} roughness={0.7} />
+      </mesh>
+      {/* Small vase on top */}
+      <mesh position={[0, 0.64, 0]} castShadow>
+        <cylinderGeometry args={[0.04, 0.06, 0.14, 12]} />
+        <meshStandardMaterial color="#5c2c4a" roughness={0.5} />
+      </mesh>
+    </group>
+  );
+}
+
 export default function AboutRoom() {
   const wallTexture = useNewspaperTexture();
 
@@ -397,26 +484,44 @@ export default function AboutRoom() {
       <hemisphereLight args={["#fff8ed", "#4a3525", 0.7]} />
       <pointLight position={[0, 3.6, 0]} color="#ffe4c4" intensity={1.8} distance={10} decay={1.8} />
 
-      {/* Framed Wall Portraits placed flush onto walls */}
+      {/* Area Rug */}
+      <RoomRug />
+
+      {/* Framed Wall Portraits:
+          Front Wall (left of door): About Me
+          Left Wall: Contact
+          Right Wall: Resume
+          Back Wall: Clean — decorative clock only */}
       <AboutMePortrait />
       <ContactPortrait />
       <ResumePortrait />
+
+      {/* Decorative Wall Clock on cleaned back wall */}
+      <WallClock position={[0, 2.5, -ABOUT_HALF + 0.06]} />
 
       {/* Wall Sconces */}
       <WallSconce position={[-ABOUT_HALF + 0.05, 2.3, -2.2]} rotationY={Math.PI / 2} />
       <WallSconce position={[-ABOUT_HALF + 0.05, 2.3, 2.2]} rotationY={Math.PI / 2} />
       <WallSconce position={[ABOUT_HALF - 0.05, 2.3, -2.2]} rotationY={-Math.PI / 2} />
       <WallSconce position={[ABOUT_HALF - 0.05, 2.3, 2.2]} rotationY={-Math.PI / 2} />
+      {/* Additional sconces on back wall */}
+      <WallSconce position={[-2.2, 2.3, -ABOUT_HALF + 0.05]} rotationY={0} />
+      <WallSconce position={[2.2, 2.3, -ABOUT_HALF + 0.05]} rotationY={0} />
 
-      {/* Furniture: Executive Desk & Bookshelf */}
+      {/* Furniture: Executive Desk, Bookshelves, Side Tables */}
       <ExecutiveDesk position={[0, 0, -2.2]} />
       <Bookshelf position={[ABOUT_HALF - 0.2, 0, -1.2]} rotationY={-Math.PI / 2} />
+      <Bookshelf position={[-ABOUT_HALF + 0.2, 0, -1.2]} rotationY={Math.PI / 2} />
+      <SideTable position={[-2.8, 0, 1.5]} />
+      <SideTable position={[2.8, 0, 1.5]} />
 
-      {/* Floor Lamps in back corners */}
+      {/* Floor Lamps — all four corners */}
       <FloorLamp x={-ABOUT_HALF + 0.75} z={-ABOUT_HALF + 0.75} />
       <FloorLamp x={ABOUT_HALF - 0.75} z={-ABOUT_HALF + 0.75} />
+      <FloorLamp x={-ABOUT_HALF + 0.75} z={ABOUT_HALF - 0.75} />
+      <FloorLamp x={ABOUT_HALF - 0.75} z={ABOUT_HALF - 0.75} />
 
-      {/* Clean Exit Door on Front Wall with no overlapping clutter */}
+      {/* Clean Exit Door on Front Wall */}
       <ExitDoor />
     </group>
   );

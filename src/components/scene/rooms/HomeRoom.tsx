@@ -106,28 +106,28 @@ function MainIdentityPortrait() {
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-[11px] tracking-[0.25em] uppercase text-[var(--color-ink)]/60 pb-2 border-b border-[var(--color-ink)]/25">
+        <div className="flex items-center justify-between text-xs tracking-[0.25em] uppercase text-[var(--color-ink)]/60 pb-2 border-b border-[var(--color-ink)]/25">
           <span className="font-[family-name:var(--font-bacley)] font-bold text-[var(--color-masthead)]">
             Room 01 &bull; Executive Suite
           </span>
           <span className="font-mono text-[10px]">Personal Dispatch No. 01</span>
         </div>
 
-        <p className="font-[family-name:var(--font-spirtush)] text-center text-[var(--color-masthead)] pt-4 text-base italic">
+        <p className="font-[family-name:var(--font-spirtush)] text-center text-[var(--color-masthead)] pt-4 text-lg italic">
           &ldquo;Every great product starts with a bold question.&rdquo;
         </p>
 
-        <h1 className="font-[family-name:var(--font-bacley)] text-center text-3xl md:text-4xl tracking-wider pt-2 font-bold whitespace-nowrap">
+        <h1 className="font-[family-name:var(--font-bacley)] text-center text-4xl tracking-wider pt-2 font-bold whitespace-nowrap">
           {typedName}
           <span className="animate-pulse text-[var(--color-masthead)]">|</span>
         </h1>
 
-        <p className="text-center text-xs tracking-widest uppercase text-[var(--color-ink)]/75 pt-1 pb-3 border-b-2 border-[var(--color-ink)] font-semibold">
+        <p className="text-center text-sm tracking-widest uppercase text-[var(--color-ink)]/75 pt-1 pb-3 border-b-2 border-[var(--color-ink)] font-semibold">
           AI Engineer &bull; Full-Stack Developer &bull; Systems Thinker
         </p>
 
-        <div className="pt-4 text-xs leading-relaxed space-y-2 text-[var(--color-ink)]/90">
-          <p className="font-[family-name:var(--font-bacley)] font-bold text-sm text-[var(--color-ink)]">
+        <div className="pt-4 text-sm leading-relaxed space-y-2 text-[var(--color-ink)]/90">
+          <p className="font-[family-name:var(--font-bacley)] font-bold text-base text-[var(--color-ink)]">
             Welcome to my creative workspace.
           </p>
           <p>
@@ -166,11 +166,11 @@ function PhilosophyPortrait() {
           <span>Core Values</span>
         </div>
 
-        <h2 className="font-[family-name:var(--font-bacley)] text-2xl tracking-wide mb-2">
+        <h2 className="font-[family-name:var(--font-bacley)] text-3xl tracking-wide mb-2">
           Engineering Philosophy
         </h2>
 
-        <div className="space-y-3 text-xs leading-relaxed text-[var(--color-ink)]/85">
+        <div className="space-y-3 text-sm leading-relaxed text-[var(--color-ink)]/85">
           <div className="p-2.5 bg-[var(--color-ink)]/5 border-l-2 border-[var(--color-masthead)]">
             <p className="font-bold text-[var(--color-ink)] text-[11px] mb-0.5">1. Precision &amp; Robust Architecture</p>
             <p className="text-[10.5px]">Build software that remains resilient, testable, and maintainable under scale.</p>
@@ -213,11 +213,11 @@ function FocusPortrait() {
           <span>Active R&amp;D</span>
         </div>
 
-        <h2 className="font-[family-name:var(--font-bacley)] text-2xl tracking-wide mb-2">
+        <h2 className="font-[family-name:var(--font-bacley)] text-3xl tracking-wide mb-2">
           Current Focus Areas
         </h2>
 
-        <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+        <div className="grid grid-cols-2 gap-2 text-sm pt-1">
           <div className="p-2.5 bg-[#f5f0e6] border border-[var(--color-ink)]/20 rounded">
             <p className="font-bold text-[var(--color-masthead)] text-[11px]">RAG &amp; Vector Search</p>
             <p className="text-[10px] text-[var(--color-ink)]/75 mt-0.5">ChromaDB, hybrid retrieval, embeddings &amp; agentic memory.</p>

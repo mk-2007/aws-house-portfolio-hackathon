@@ -73,28 +73,29 @@ function ExitDoor() {
   );
 }
 
-/** Back Wall: Workshop Manifesto Framed Portrait */
+/** Front Wall (left of door): Workshop Manifesto Overview */
 function WorkshopManifestoPortrait() {
   return (
     <FramedWallPortrait
-      position={[0, 2.15, -SKILLS_HALF + 0.08]}
-      frameWidth={4.4}
+      position={[-2.2, 2.15, SKILLS_HALF - 0.08]}
+      rotation={[0, Math.PI, 0]}
+      frameWidth={3.6}
       frameHeight={3.2}
       woodColor="#242028"
     >
       <div
         className="bg-[var(--color-paper)] text-[var(--color-ink)] p-7 border border-[var(--color-ink)]/30"
         style={{
-          width: "520px",
+          width: "440px",
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
           <span>Room 02 &bull; Skills &amp; Stack</span>
           <span>Technical Arsenal</span>
         </div>
 
-        <h1 className="font-[family-name:var(--font-bacley)] text-center text-3xl tracking-wide font-bold mb-1">
+        <h1 className="font-[family-name:var(--font-bacley)] text-center text-4xl tracking-wide font-bold mb-1">
           THE WORKSHOP
         </h1>
 
@@ -102,8 +103,8 @@ function WorkshopManifestoPortrait() {
           &ldquo;The right tools don&apos;t create great software. The right mindset does.&rdquo;
         </p>
 
-        <div className="text-xs leading-relaxed text-[var(--color-ink)]/90 space-y-2.5 pt-2 border-t border-[var(--color-ink)]/20">
-          <p className="font-[family-name:var(--font-bacley)] font-bold text-sm text-[var(--color-ink)]">
+        <div className="text-sm leading-relaxed text-[var(--color-ink)]/90 space-y-2.5 pt-2 border-t border-[var(--color-ink)]/20">
+          <p className="font-[family-name:var(--font-bacley)] font-bold text-base text-[var(--color-ink)]">
             Engineering Precision &bull; Modern Stack
           </p>
           <p>
@@ -111,12 +112,6 @@ function WorkshopManifestoPortrait() {
             services and autonomous generative AI agents — here are the core technologies I wield
             daily to engineer performant, reliable systems.
           </p>
-        </div>
-
-        <div className="mt-3 pt-2.5 border-t border-[var(--color-ink)]/25 grid grid-cols-3 gap-2 text-center text-[10px] uppercase font-bold tracking-wider text-[var(--color-ink)]/70">
-          <div className="p-1 bg-[var(--color-ink)]/5 rounded">Languages &amp; DBs (Left)</div>
-          <div className="p-1 bg-[var(--color-ink)]/5 rounded">AI &amp; Backend (Right)</div>
-          <div className="p-1 bg-[var(--color-ink)]/5 rounded">DevOps (Front)</div>
         </div>
       </div>
     </FramedWallPortrait>
@@ -140,18 +135,18 @@ function LanguagesAndDatabasesPortrait() {
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-[#a8791f] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[#a8791f] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
           <span>Languages &amp; Persistence</span>
           <span>Core Stack</span>
         </div>
 
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           <div>
-            <h3 className="font-[family-name:var(--font-bacley)] text-base tracking-wide mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#a8791f]" />
+            <h3 className="font-[family-name:var(--font-bacley)] text-lg tracking-wide mb-2.5 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#a8791f]" />
               Programming Languages
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {["Python", "C++", "JavaScript", "TypeScript", "SQL"].map((t) => (
                 <TechTag key={t} label={t} />
               ))}
@@ -159,11 +154,11 @@ function LanguagesAndDatabasesPortrait() {
           </div>
 
           <div className="pt-2 border-t border-[var(--color-ink)]/20">
-            <h3 className="font-[family-name:var(--font-bacley)] text-base tracking-wide mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#2c4a5e]" />
+            <h3 className="font-[family-name:var(--font-bacley)] text-lg tracking-wide mb-2.5 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2c4a5e]" />
               Databases &amp; Vector Stores
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {["PostgreSQL", "SQLite", "ChromaDB", "Vector Databases", "Redis Cache"].map((t) => (
                 <TechTag key={t} label={t} />
               ))}
@@ -192,18 +187,18 @@ function AiAndBackendPortrait() {
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-[11px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
           <span>AI &amp; Backend Engineering</span>
           <span>Core Domain</span>
         </div>
 
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           <div>
-            <h3 className="font-[family-name:var(--font-bacley)] text-base tracking-wide mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-masthead)]" />
+            <h3 className="font-[family-name:var(--font-bacley)] text-lg tracking-wide mb-2.5 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-masthead)]" />
               Artificial Intelligence &amp; RAG
             </h3>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {[
                 "Retrieval-Augmented Generation",
                 "LangChain",
@@ -218,11 +213,11 @@ function AiAndBackendPortrait() {
           </div>
 
           <div className="pt-2 border-t border-[var(--color-ink)]/20">
-            <h3 className="font-[family-name:var(--font-bacley)] text-base tracking-wide mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#3f6b45]" />
+            <h3 className="font-[family-name:var(--font-bacley)] text-lg tracking-wide mb-2.5 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#3f6b45]" />
               Backend Architecture
             </h3>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {["FastAPI", "RESTful APIs", "JWT Auth", "Async Pipelines", "Node.js"].map((t) => (
                 <TechTag key={t} label={t} />
               ))}
@@ -234,36 +229,40 @@ function AiAndBackendPortrait() {
   );
 }
 
-/** Front Wall: DevOps & CS Foundations with Icons */
+/** Back Wall (centered): DevOps & CS Foundations with Icons — moved from front wall */
 function FoundationsPortrait() {
   return (
     <FramedWallPortrait
-      position={[-2.1, 2.15, SKILLS_HALF - 0.08]}
-      rotation={[0, Math.PI, 0]}
-      frameWidth={3.2}
-      frameHeight={3.0}
+      position={[0, 2.15, -SKILLS_HALF + 0.08]}
+      frameWidth={4.4}
+      frameHeight={3.2}
       woodColor="#242028"
     >
       <div
-        className="bg-[var(--color-paper)] text-[var(--color-ink)] p-5 border border-[var(--color-ink)]/30"
+        className="bg-[var(--color-paper)] text-[var(--color-ink)] p-6 border border-[var(--color-ink)]/30"
         style={{
-          width: "400px",
+          width: "520px",
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="text-[10px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-1.5 mb-2">
+        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
           <span>DevOps &amp; Foundations</span>
+          <span>Engineering Toolkit</span>
         </div>
 
-        <h3 className="font-[family-name:var(--font-bacley)] text-base tracking-wide mb-2">
+        <h3 className="font-[family-name:var(--font-bacley)] text-2xl tracking-wide font-bold mb-3">
           Tools &amp; Computer Science
         </h3>
 
-        <div className="flex flex-wrap gap-1.5 mb-2">
+        <div className="flex flex-wrap gap-2.5 mb-3">
           {["Git & GitHub", "Docker", "Linux", "VS Code", "Postman", "OOP", "Data Structures", "Algorithms"].map((t) => (
             <TechTag key={t} label={t} />
           ))}
         </div>
+
+        <p className="font-[family-name:var(--font-spirtush)] text-sm text-[var(--color-ink)]/70 italic pt-2 border-t border-[var(--color-ink)]/20">
+          &ldquo;Mastering fundamentals is the foundation of engineering excellence.&rdquo;
+        </p>
       </div>
     </FramedWallPortrait>
   );
@@ -298,6 +297,87 @@ function LabWorkstation({ position }: { position: [number, number, number] }) {
           </mesh>
         </group>
       ))}
+    </group>
+  );
+}
+
+/** Server Rack / Equipment Cabinet */
+function ServerRack({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  return (
+    <group position={position} rotation={[0, rotationY, 0]}>
+      {/* Cabinet body */}
+      <mesh position={[0, 1.1, 0]} castShadow>
+        <boxGeometry args={[0.7, 2.2, 0.5]} />
+        <meshStandardMaterial color="#1a1c22" metalness={0.5} roughness={0.4} />
+      </mesh>
+      {/* Front panel lines (rack slots) */}
+      {[0.3, 0.6, 0.9, 1.2, 1.5, 1.8].map((y) => (
+        <mesh key={y} position={[0, y, 0.26]}>
+          <boxGeometry args={[0.6, 0.04, 0.01]} />
+          <meshStandardMaterial color="#2d3138" metalness={0.6} roughness={0.3} />
+        </mesh>
+      ))}
+      {/* Status LEDs */}
+      {[0.35, 0.65, 0.95, 1.25].map((y, i) => (
+        <mesh key={y} position={[0.25, y, 0.27]}>
+          <sphereGeometry args={[0.015, 8, 8]} />
+          <meshStandardMaterial
+            color={i % 2 === 0 ? "#22c55e" : "#3b82f6"}
+            emissive={i % 2 === 0 ? "#22c55e" : "#3b82f6"}
+            emissiveIntensity={1.5}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/** Whiteboard Stand */
+function WhiteboardStand({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  return (
+    <group position={position} rotation={[0, rotationY, 0]}>
+      {/* Board */}
+      <mesh position={[0, 1.6, 0]} castShadow>
+        <boxGeometry args={[1.4, 1.0, 0.04]} />
+        <meshStandardMaterial color="#e8e4dc" roughness={0.5} />
+      </mesh>
+      {/* Board frame */}
+      <mesh position={[0, 1.6, -0.025]}>
+        <boxGeometry args={[1.5, 1.1, 0.02]} />
+        <meshStandardMaterial color="#2d3138" metalness={0.5} roughness={0.4} />
+      </mesh>
+      {/* Legs */}
+      {[-0.55, 0.55].map((lx) => (
+        <mesh key={lx} position={[lx, 0.8, -0.15]} castShadow>
+          <cylinderGeometry args={[0.02, 0.02, 1.6, 10]} />
+          <meshStandardMaterial color="#2d3138" metalness={0.6} roughness={0.3} />
+        </mesh>
+      ))}
+      {/* Tray */}
+      <mesh position={[0, 1.08, 0.03]}>
+        <boxGeometry args={[1.0, 0.04, 0.08]} />
+        <meshStandardMaterial color="#2d3138" metalness={0.5} roughness={0.4} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Modern Area Rug */
+function SkillsRug() {
+  return (
+    <group position={[0, 0.006, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[5, 5]} />
+        <meshStandardMaterial color="#1e1e2a" roughness={0.9} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]} receiveShadow>
+        <planeGeometry args={[4.6, 4.6]} />
+        <meshStandardMaterial color="#28283a" roughness={0.85} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]} receiveShadow>
+        <planeGeometry args={[4.2, 4.2]} />
+        <meshStandardMaterial color="#1a1a28" roughness={0.8} />
+      </mesh>
     </group>
   );
 }
@@ -342,7 +422,14 @@ export default function SkillsRoom() {
       <hemisphereLight args={["#f0f4fc", "#30303c", 0.7]} />
       <pointLight position={[0, 3.5, 0]} color="#d8e8f8" intensity={1.8} distance={10} decay={1.8} />
 
-      {/* Framed Wall Portraits on surrounding walls */}
+      {/* Area Rug */}
+      <SkillsRug />
+
+      {/* Framed Wall Portraits:
+          Front Wall (left of door): Workshop Manifesto overview
+          Left Wall: Languages & Databases
+          Right Wall: AI & Backend
+          Back Wall (centered): DevOps & Foundations */}
       <WorkshopManifestoPortrait />
       <LanguagesAndDatabasesPortrait />
       <AiAndBackendPortrait />
@@ -353,13 +440,25 @@ export default function SkillsRoom() {
       <WallSconce position={[-SKILLS_HALF + 0.05, 2.3, 2.2]} rotationY={Math.PI / 2} />
       <WallSconce position={[SKILLS_HALF - 0.05, 2.3, -2.2]} rotationY={-Math.PI / 2} />
       <WallSconce position={[SKILLS_HALF - 0.05, 2.3, 2.2]} rotationY={-Math.PI / 2} />
+      {/* Back wall sconces */}
+      <WallSconce position={[-2.2, 2.3, -SKILLS_HALF + 0.05]} rotationY={0} />
+      <WallSconce position={[2.2, 2.3, -SKILLS_HALF + 0.05]} rotationY={0} />
 
       {/* Developer Workstation */}
       <LabWorkstation position={[0, 0, -2.2]} />
 
-      {/* Floor Lamps in back corners */}
+      {/* Server Racks against back wall sides */}
+      <ServerRack position={[-3.2, 0, -SKILLS_HALF + 0.35]} />
+      <ServerRack position={[3.2, 0, -SKILLS_HALF + 0.35]} />
+
+      {/* Whiteboard on left wall area */}
+      <WhiteboardStand position={[-2.8, 0, 1.5]} rotationY={Math.PI / 4} />
+
+      {/* Floor Lamps — all four corners */}
       <FloorLamp x={-SKILLS_HALF + 0.75} z={-SKILLS_HALF + 0.75} />
       <FloorLamp x={SKILLS_HALF - 0.75} z={-SKILLS_HALF + 0.75} />
+      <FloorLamp x={-SKILLS_HALF + 0.75} z={SKILLS_HALF - 0.75} />
+      <FloorLamp x={SKILLS_HALF - 0.75} z={SKILLS_HALF - 0.75} />
 
       {/* Exit Door */}
       <ExitDoor />

@@ -102,26 +102,75 @@ function GalleryTitle() {
     <Html
       position={[0, 3.35, -PROJECTS_HALF + 0.15]}
       transform
-      distanceFactor={4.4}
+      distanceFactor={3.2}
+      prepend
       center
       occlude
       zIndexRange={[10, 0]}
-      style={{ WebkitFontSmoothing: "antialiased" }}
+      style={{ WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" }}
     >
       <div
         className="bg-[var(--color-paper)] text-[var(--color-ink)] select-none px-8 py-3.5 border border-[var(--color-ink)]/30 text-center"
-        style={{ boxShadow: "0 12px 36px rgba(0,0,0,0.5)" }}
+        style={{ boxShadow: "0 12px 36px rgba(0,0,0,0.5)", transform: "scale(1.15)", transformOrigin: "center center" }}
       >
-        <p className="font-[family-name:var(--font-spirtush)] text-xs uppercase tracking-widest text-[var(--color-masthead)] font-bold mb-1">
+        <p className="font-[family-name:var(--font-spirtush)] text-sm uppercase tracking-widest text-[var(--color-masthead)] font-bold mb-1">
           Exhibition Gallery &bull; Click to Explore
         </p>
         <h2
-          className="font-[family-name:var(--font-bacley)] tracking-wider whitespace-nowrap font-bold text-2xl"
+          className="font-[family-name:var(--font-bacley)] tracking-wider whitespace-nowrap font-bold text-3xl"
         >
           THE PROJECTS VAULT
         </h2>
       </div>
     </Html>
+  );
+}
+
+/** Area Rug for the Projects Room */
+function ProjectsRug() {
+  return (
+    <group position={[0, 0.006, 1]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[8, 5]} />
+        <meshStandardMaterial color="#2e1e14" roughness={0.9} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]} receiveShadow>
+        <planeGeometry args={[7.6, 4.6]} />
+        <meshStandardMaterial color="#3e2c1e" roughness={0.85} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]} receiveShadow>
+        <planeGeometry args={[7.2, 4.2]} />
+        <meshStandardMaterial color="#2a1a12" roughness={0.8} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Decorative Display Pedestal */
+function DisplayPedestal({ position, color = WOOD_DARK }: { position: [number, number, number]; color?: string }) {
+  return (
+    <group position={position}>
+      {/* Base */}
+      <mesh position={[0, 0.04, 0]} castShadow>
+        <boxGeometry args={[0.5, 0.08, 0.5]} />
+        <meshStandardMaterial color={color} roughness={0.7} />
+      </mesh>
+      {/* Column */}
+      <mesh position={[0, 0.55, 0]} castShadow>
+        <cylinderGeometry args={[0.12, 0.15, 1.0, 12]} />
+        <meshStandardMaterial color={color} roughness={0.7} />
+      </mesh>
+      {/* Top platform */}
+      <mesh position={[0, 1.08, 0]} castShadow>
+        <boxGeometry args={[0.45, 0.06, 0.45]} />
+        <meshStandardMaterial color={GOLD} metalness={0.6} roughness={0.35} />
+      </mesh>
+      {/* Decorative sphere on top */}
+      <mesh position={[0, 1.26, 0]} castShadow>
+        <sphereGeometry args={[0.12, 16, 16]} />
+        <meshStandardMaterial color={GOLD} metalness={0.7} roughness={0.3} />
+      </mesh>
+    </group>
   );
 }
 
@@ -197,11 +246,12 @@ function ProjectChest({
       <Billboard position={[0, 1.55, 0]}>
         <Html
           center
-          distanceFactor={5}
+          distanceFactor={3.5}
+          prepend
           zIndexRange={[10, 0]}
-          style={{ pointerEvents: "none", WebkitFontSmoothing: "antialiased" }}
+          style={{ pointerEvents: "none", WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" }}
         >
-          <div className="font-[family-name:var(--font-bacley)] font-bold text-xs tracking-wider px-3 py-1.5 bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-ink)]/30 rounded shadow-md whitespace-nowrap select-none">
+          <div className="font-[family-name:var(--font-bacley)] font-bold text-sm tracking-wider px-3 py-1.5 bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-ink)]/30 rounded shadow-md whitespace-nowrap select-none">
             {project.name}
           </div>
         </Html>
@@ -256,6 +306,9 @@ export default function ProjectsRoom() {
       <TitleFrame />
       <GalleryTitle />
 
+      {/* Area Rug */}
+      <ProjectsRug />
+
       {/* Row of 6 Project Chests */}
       {ROW_X.map((x, i) => (
         <ProjectChest
@@ -266,16 +319,27 @@ export default function ProjectsRoom() {
         />
       ))}
 
+      {/* Display Pedestals along side walls */}
+      <DisplayPedestal position={[-PROJECTS_HALF + 0.6, 0, -2]} />
+      <DisplayPedestal position={[-PROJECTS_HALF + 0.6, 0, 2]} />
+      <DisplayPedestal position={[PROJECTS_HALF - 0.6, 0, -2]} />
+      <DisplayPedestal position={[PROJECTS_HALF - 0.6, 0, 2]} />
+
       {/* Standing Floor Lamps in corners */}
       <FloorLamp x={-PROJECTS_HALF + 0.65} z={-3.8} />
       <FloorLamp x={PROJECTS_HALF - 0.65} z={-3.8} />
+      <FloorLamp x={-PROJECTS_HALF + 0.65} z={3.8} />
+      <FloorLamp x={PROJECTS_HALF - 0.65} z={3.8} />
 
       {/* Wall Sconces */}
-      <WallSconce position={[-PROJECTS_HALF + 0.05, 2.3, 0]} rotationY={Math.PI / 2} />
-      <WallSconce position={[PROJECTS_HALF - 0.05, 2.3, 0]} rotationY={-Math.PI / 2} />
+      <WallSconce position={[-PROJECTS_HALF + 0.05, 2.3, -2.5]} rotationY={Math.PI / 2} />
+      <WallSconce position={[-PROJECTS_HALF + 0.05, 2.3, 2.5]} rotationY={Math.PI / 2} />
+      <WallSconce position={[PROJECTS_HALF - 0.05, 2.3, -2.5]} rotationY={-Math.PI / 2} />
+      <WallSconce position={[PROJECTS_HALF - 0.05, 2.3, 2.5]} rotationY={-Math.PI / 2} />
 
       {/* Exit Door */}
       <ExitDoor />
     </group>
   );
 }
+

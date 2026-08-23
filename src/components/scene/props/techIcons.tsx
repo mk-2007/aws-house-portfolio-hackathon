@@ -96,8 +96,8 @@ export const TECH_ICONS: Record<string, IconType> = {
 export function TechTag({ label }: { label: string }) {
   const Icon = TECH_ICONS[label];
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium border border-[var(--color-ink)]/30 bg-[var(--color-ink)]/5 px-2.5 py-1 rounded whitespace-nowrap text-[var(--color-ink)]">
-      {Icon ? <Icon size={13} className="shrink-0 text-[var(--color-masthead)]" /> : null}
+    <span className="inline-flex items-center gap-1.5 text-[13px] font-bold border border-[var(--color-ink)]/30 bg-[var(--color-ink)]/5 px-3 py-1.5 rounded whitespace-nowrap text-[var(--color-ink)]">
+      {Icon ? <Icon size={16} className="shrink-0 text-[var(--color-masthead)]" /> : null}
       <span>{label}</span>
     </span>
   );

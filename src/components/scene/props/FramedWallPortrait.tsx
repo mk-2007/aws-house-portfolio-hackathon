@@ -56,7 +56,8 @@ export default function FramedWallPortrait({
       <Html
         position={[0, 0, depth / 2 + 0.03]}
         transform
-        distanceFactor={4}
+        distanceFactor={3}
+        prepend
         center
         occlude
         zIndexRange={[10, 0]}
@@ -64,9 +65,10 @@ export default function FramedWallPortrait({
           pointerEvents: "auto",
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
+          textRendering: "optimizeLegibility",
         }}
       >
-        <div className="select-none flex flex-col justify-center">{children}</div>
+        <div className="select-none flex flex-col justify-center" style={{ transform: "scale(1.15)", transformOrigin: "center center" }}>{children}</div>
       </Html>
     </group>
   );
