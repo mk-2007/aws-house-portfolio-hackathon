@@ -90,17 +90,6 @@ Next.js to an ancient version incompatible with the App Router and break
 everything. Plain `npm audit` (no fix) is fine to check; the flagged items
 are in Next's internal dev tooling, not your deployed site.
 
-## Deploy to Vercel
-
-1. Push this project to a GitHub repo (e.g. under `mk-2007`).
-2. Go to vercel.com -> Add New Project -> import that repo.
-3. Framework preset auto-detects as Next.js - no config needed.
-4. Deploy. Every push to `main` after that auto-deploys.
-
-No environment variables are needed yet. If a project later needs one
-(e.g. an API key for a chatbot embed), we'll add it under
-Vercel -> Project -> Settings -> Environment Variables when we get there.
-
 ## Font licensing note
 
 Bacley and Spirtush are both personal-use licensed. Fine for this
