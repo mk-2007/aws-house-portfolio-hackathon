@@ -235,33 +235,33 @@ function FoundationsPortrait() {
       // This panel occupies only the clear wall area beside the exit.
       position={[-2.4, 2.15, SKILLS_HALF - 0.08]}
       rotation={[0, Math.PI, 0]}
-      frameWidth={2.8}
-      frameHeight={3.2}
+      frameWidth={2.9}
+      frameHeight={2.25}
       woodColor="#242028"
     >
       <div
-        className="bg-[var(--color-paper)] text-[var(--color-ink)] p-6 border border-[var(--color-ink)]/30"
+        className="bg-[var(--color-paper)] text-[var(--color-ink)] p-4 border border-[var(--color-ink)]/30"
         style={{
-          width: "520px",
+          width: "350px",
           boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
         }}
       >
-        <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-2 mb-3">
+        <div className="flex items-center justify-between text-[10px] tracking-widest uppercase text-[var(--color-masthead)] font-bold border-b border-[var(--color-ink)]/25 pb-1.5 mb-2">
           <span>DevOps &amp; Foundations</span>
           <span>Engineering Toolkit</span>
         </div>
 
-        <h3 className="font-[family-name:var(--font-bacley)] text-2xl tracking-wide font-bold mb-3">
+        <h3 className="font-[family-name:var(--font-bacley)] text-xl tracking-wide font-bold mb-2">
           Tools &amp; Computer Science
         </h3>
 
-        <div className="flex flex-wrap gap-2.5 mb-3">
+        <div className="flex flex-wrap gap-1.5 mb-2">
           {["Git & GitHub", "Docker", "Linux", "VS Code", "Postman", "OOP", "Data Structures", "Algorithms"].map((t) => (
             <TechTag key={t} label={t} />
           ))}
         </div>
 
-        <p className="font-[family-name:var(--font-spirtush)] text-sm text-[var(--color-ink)]/70 italic pt-2 border-t border-[var(--color-ink)]/20">
+        <p className="font-[family-name:var(--font-spirtush)] text-xs text-[var(--color-ink)]/70 italic pt-1.5 border-t border-[var(--color-ink)]/20">
           &ldquo;Mastering fundamentals is the foundation of engineering excellence.&rdquo;
         </p>
       </div>
