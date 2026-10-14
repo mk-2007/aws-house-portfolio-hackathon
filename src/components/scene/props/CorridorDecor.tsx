@@ -86,6 +86,7 @@ export function HouseItineraryPlaque({
       <Html
         position={[0, 0, 0.03]}
         transform
+        scale={0.5}
         distanceFactor={4}
         center
         occlude
@@ -100,6 +101,11 @@ export function HouseItineraryPlaque({
           style={{
             width: "440px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+            // Counter the Html scale so the panel stays the same physical
+            // size while its text is rasterized more sharply.
+            transform: "scale(2)",
+            transformOrigin: "center center",
+            backfaceVisibility: "hidden",
           }}
         >
           <div className="flex items-center justify-between border-b-2 border-[var(--color-masthead)] pb-2 mb-3">

@@ -16,7 +16,7 @@ const CONTENT: Record<AboutObjectId, { icon: string; title: string; body: React.
           meaningful.
         </p>
         <a
-          href="/mahandar-kumar-resume.pdf"
+          href="/Resume.pdf"
           download
           className="inline-flex items-center gap-2 font-[family-name:var(--font-bacley)] tracking-wide bg-[var(--color-ink)] text-[var(--color-paper)] hover:bg-[var(--color-masthead)]"
           style={{ fontSize: "clamp(0.9rem, 1.2vw, 1.05rem)", padding: "0.7em 1.4em" }}

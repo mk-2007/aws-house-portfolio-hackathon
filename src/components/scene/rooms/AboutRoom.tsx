@@ -77,12 +77,11 @@ function ExitDoor() {
   );
 }
 
-/** Framed Portrait (FRONT Wall, left of door): About Me & The Journey */
+/** Main About panel on the room's presentation wall, opposite the exit. */
 function AboutMePortrait() {
   return (
     <FramedWallPortrait
-      position={[-2.2, 2.15, ABOUT_HALF - 0.08]}
-      rotation={[0, Math.PI, 0]}
+      position={[0, 2.15, -ABOUT_HALF + 0.08]}
       frameWidth={3.6}
       frameHeight={3.2}
       woodColor="#2e1e12"
@@ -278,7 +277,7 @@ function ResumePortrait() {
 
         <div className="flex flex-col gap-2 pt-2 border-t border-[var(--color-ink)]/20">
           <a
-            href="/mahandar-kumar-resume.pdf"
+            href="/Resume.pdf"
             download="Mahandar_Kumar_Resume.pdf"
             className="flex items-center justify-center gap-2 py-3 px-4 bg-[var(--color-masthead)] text-white hover:bg-[#5a1b16] transition-colors text-sm font-[family-name:var(--font-bacley)] tracking-wider uppercase font-bold rounded shadow-md"
           >
@@ -286,7 +285,7 @@ function ResumePortrait() {
             Download Official Resume (PDF)
           </a>
           <a
-            href="/mahandar-kumar-resume.pdf"
+            href="/Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-1.5 py-1 text-xs text-[var(--color-ink)]/75 hover:text-[var(--color-ink)] font-mono"
@@ -488,16 +487,18 @@ export default function AboutRoom() {
       <RoomRug />
 
       {/* Framed Wall Portraits:
-          Front Wall (left of door): About Me
+          Presentation wall (opposite the door): About Me
           Left Wall: Contact
           Right Wall: Resume
-          Back Wall: Clean — decorative clock only */}
+          Exit wall: decorative clock only */}
       <AboutMePortrait />
       <ContactPortrait />
       <ResumePortrait />
 
-      {/* Decorative Wall Clock on cleaned back wall */}
-      <WallClock position={[0, 2.5, -ABOUT_HALF + 0.06]} />
+      {/* Decorative Wall Clock, clear of the central exit door. */}
+      <group position={[2.7, 0, ABOUT_HALF]} rotation={[0, Math.PI, 0]}>
+        <WallClock position={[0, 2.5, 0.06]} />
+      </group>
 
       {/* Wall Sconces */}
       <WallSconce position={[-ABOUT_HALF + 0.05, 2.3, -2.2]} rotationY={Math.PI / 2} />

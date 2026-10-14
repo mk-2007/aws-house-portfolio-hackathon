@@ -56,6 +56,7 @@ export default function FramedWallPortrait({
       <Html
         position={[0, 0, depth / 2 + 0.03]}
         transform
+        scale={0.5}
         distanceFactor={3}
         prepend
         center
@@ -68,7 +69,18 @@ export default function FramedWallPortrait({
           textRendering: "optimizeLegibility",
         }}
       >
-        <div className="select-none flex flex-col justify-center" style={{ transform: "scale(1.15)", transformOrigin: "center center" }}>{children}</div>
+        <div
+          className="select-none flex flex-col justify-center"
+          style={{
+            // Rendering the DOM at double resolution, then reducing its 3D
+            // transform scale, keeps text crisp without changing panel size.
+            transform: "scale(2)",
+            transformOrigin: "center center",
+            backfaceVisibility: "hidden",
+          }}
+        >
+          {children}
+        </div>
       </Html>
     </group>
   );

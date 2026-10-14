@@ -295,11 +295,12 @@ export default function Corridor() {
       {/* Ceiling Cross Beams */}
       <CeilingBeams positions={BEAM_POSITIONS} width={CORRIDOR_WIDTH} />
 
-      {/* Entryway Console Table with House Directory & Tour Plaque */}
+      {/* Entryway Console Table */}
       <ConsoleTable position={[-WALL_X + 0.65, 0, -11]} />
+
+      {/* House directory on the entrance end wall, opposite the clock wall. */}
       <HouseItineraryPlaque
-        position={[-WALL_X + 0.04, 2.3, -11]}
-        rotation={[0, Math.PI / 2, 0]}
+        position={[0, 2.3, CORRIDOR_START_Z + 0.04]}
       />
 
       {/* Modern Wall Sconces flanking doorways */}

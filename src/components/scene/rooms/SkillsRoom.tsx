@@ -73,12 +73,11 @@ function ExitDoor() {
   );
 }
 
-/** Front Wall (left of door): Workshop Manifesto Overview */
+/** Main workshop panel on the room's presentation wall, opposite the exit. */
 function WorkshopManifestoPortrait() {
   return (
     <FramedWallPortrait
-      position={[-2.2, 2.15, SKILLS_HALF - 0.08]}
-      rotation={[0, Math.PI, 0]}
+      position={[0, 2.15, -SKILLS_HALF + 0.08]}
       frameWidth={3.6}
       frameHeight={3.2}
       woodColor="#242028"
@@ -229,12 +228,14 @@ function AiAndBackendPortrait() {
   );
 }
 
-/** Back Wall (centered): DevOps & CS Foundations with Icons — moved from front wall */
+/** Exit wall (left of door): DevOps & CS Foundations with Icons */
 function FoundationsPortrait() {
   return (
     <FramedWallPortrait
-      position={[0, 2.15, -SKILLS_HALF + 0.08]}
-      frameWidth={4.4}
+      // This panel occupies only the clear wall area beside the exit.
+      position={[-2.4, 2.15, SKILLS_HALF - 0.08]}
+      rotation={[0, Math.PI, 0]}
+      frameWidth={2.8}
       frameHeight={3.2}
       woodColor="#242028"
     >
@@ -426,10 +427,10 @@ export default function SkillsRoom() {
       <SkillsRug />
 
       {/* Framed Wall Portraits:
-          Front Wall (left of door): Workshop Manifesto overview
+          Presentation wall (opposite the door): Workshop Manifesto
           Left Wall: Languages & Databases
           Right Wall: AI & Backend
-          Back Wall (centered): DevOps & Foundations */}
+          Exit wall (left of door): DevOps & Foundations */}
       <WorkshopManifestoPortrait />
       <LanguagesAndDatabasesPortrait />
       <AiAndBackendPortrait />
