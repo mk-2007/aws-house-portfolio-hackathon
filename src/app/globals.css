@@ -60,3 +60,13 @@ body {
     box-shadow: 0 0 0 3px #2c1d10, 0 0 55px 10px rgba(255, 207, 158, 0.32);
   }
 }
+
+/* Classic (text) view typography - scoped so it never touches the 3D HUD. */
+.classic-prose h1 { font-family: var(--font-bacley), serif; font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1.1; margin-bottom: .4rem; }
+.classic-prose h2 { font-family: var(--font-bacley), serif; font-size: 1.8rem; margin: 2.5rem 0 .75rem; padding-bottom: .3rem; border-bottom: 2px solid var(--color-ink); }
+.classic-prose h3 { font-family: var(--font-bacley), serif; font-size: 1.2rem; margin: 1.2rem 0 .3rem; }
+.classic-prose p, .classic-prose li { margin-bottom: .5rem; }
+.classic-prose ul { list-style: disc; padding-left: 1.25rem; }
+.classic-prose ol { list-style: decimal; padding-left: 1.25rem; }
+.classic-prose article { margin-bottom: 1.4rem; padding-bottom: 1rem; border-bottom: 1px dashed rgba(26,23,20,.35); }
+.classic-prose a { color: var(--color-masthead); text-decoration: underline; text-underline-offset: 3px; }

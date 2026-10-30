@@ -8,16 +8,24 @@ import KeyboardControls from "@/components/hud/KeyboardControls";
 import RenderErrorBanner from "@/components/hud/RenderErrorBanner";
 import ProjectDetailOverlay from "@/components/hud/ProjectDetailOverlay";
 import AboutObjectOverlay from "@/components/hud/AboutObjectOverlay";
+import ClassicView from "@/components/classic/ClassicView";
+import SeoContent from "@/components/classic/SeoContent";
+import ViewToggle from "@/components/hud/ViewToggle";
 import { useAppStore } from "@/store/appStore";
 import { useSpaceStore } from "@/store/spaceStore";
 
 export default function Home() {
   const stage = useAppStore((s) => s.stage);
+  const view = useAppStore((s) => s.view);
   const space = useSpaceStore((s) => s.space);
   const inHouse = stage === "corridor"; // past the welcome door
 
   return (
     <main className="relative flex-1 min-h-0 flex flex-col">
+      {/* Text copy for crawlers / AI scorers (hidden, in the static HTML). */}
+      <SeoContent />
+      {view === "classic" && <ClassicView />}
+      {view === "house" && <ViewToggle />}
       {stage === "welcome" && <WelcomeScreen />}
       {/* Corridor stays mounted the whole time — no reload when the
           welcome screen fades away, it's just been covered until now. */}

@@ -9,12 +9,19 @@ import { create } from "zustand";
  */
 export type AppStage = "welcome" | "corridor";
 
+export type AppView = "house" | "classic";
+
 interface AppState {
   stage: AppStage;
+  /** "house" = the 3D experience, "classic" = plain accessible text version. */
+  view: AppView;
   enterCorridor: () => void;
+  setView: (v: AppView) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
   stage: "welcome",
+  view: "house",
   enterCorridor: () => set({ stage: "corridor" }),
+  setView: (view) => set({ view }),
 }));
