@@ -17,6 +17,7 @@ import { useNewspaperTexture } from "@/components/scene/textures/useNewspaperTex
 import FramedWallPortrait from "@/components/scene/props/FramedWallPortrait";
 import FloorLamp from "@/components/scene/props/FloorLamp";
 import { WallSconce } from "@/components/scene/props/CorridorDecor";
+import KeyPickup from "@/components/scene/props/KeyPickup";
 import { useTypewriter } from "@/lib/useTypewriter";
 import { playTypingSound } from "@/lib/typingSound";
 
@@ -384,6 +385,9 @@ export default function HomeRoom() {
       {/* Standing Floor Lamps in corners */}
       <FloorLamp x={-HOME_HALF + 0.75} z={-HOME_HALF + 0.75} />
       <FloorLamp x={HOME_HALF - 0.75} z={-HOME_HALF + 0.75} />
+
+      {/* Key 1 of 3 - the easy one, glinting on the desk */}
+      <KeyPickup id="home" position={[0.8, 0.95, -2.55]} />
 
       {/* Exit Door */}
       <ExitDoor />

@@ -108,6 +108,13 @@ export default function WelcomeScreen() {
           Welcome to the House of Mahandar
         </p>
 
+        <p
+          className="font-[family-name:var(--font-bacley)] tracking-[0.2em] uppercase text-[#ffd978]/90 keys-pulse-text"
+          style={{ fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)" }}
+        >
+          Psst&hellip; three brass keys are hidden inside
+        </p>
+
         {/* The door itself — perspective wrapper so rotateY reads as a
             hinge-swing rather than a flat flip. Sized off vmin so it
             scales with the actual window instead of staying pinned to

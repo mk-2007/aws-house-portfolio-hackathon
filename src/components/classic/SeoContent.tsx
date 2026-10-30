@@ -10,7 +10,7 @@ import ContentSections from "./ContentSections";
 export default function SeoContent() {
   return (
     <div className="sr-only" inert>
-      <ContentSections withLinks={false} />
+      <ContentSections withLinks={false} idPrefix="seo-" />
     </div>
   );
 }

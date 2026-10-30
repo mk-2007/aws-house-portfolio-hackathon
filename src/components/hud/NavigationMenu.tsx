@@ -1,10 +1,11 @@
 "use client";
 
 import type { IconType } from "react-icons";
-import { TbHome, TbTool, TbBox, TbUser, TbDoorExit } from "react-icons/tb";
+import { TbHome, TbTool, TbBox, TbUser, TbDoorExit, TbKey } from "react-icons/tb";
 import { DOORS, type RoomId } from "@/components/scene/corridorLayout";
 import { useSpaceStore } from "@/store/spaceStore";
-import { enterRoom, exitToCorridor, jumpToRoom } from "@/lib/roomNavigation";
+import { enterRoom, exitToCorridor, jumpToRoom, exitAttic, enterAttic } from "@/lib/roomNavigation";
+import { useKeysStore, countKeys } from "@/store/keysStore";
 
 const ROOM_ICONS: Record<RoomId, IconType> = {
   home: TbHome,
@@ -24,9 +25,16 @@ const ROOM_ICONS: Record<RoomId, IconType> = {
 export default function NavigationMenu() {
   const space = useSpaceStore((s) => s.space);
   const isCorridor = space === "corridor";
+  const atticUnlocked = useKeysStore((s) => countKeys(s.collected) === 3);
 
-  const items: { key: string; label: string; icon: IconType; onClick: () => void }[] = isCorridor
-    ? DOORS.map((d) => ({ key: d.id, label: d.label, icon: ROOM_ICONS[d.id], onClick: () => enterRoom(d.id) }))
+  const items: { key: string; label: string; icon: IconType; onClick: () => void }[] = space === "attic"
+    ? [{ key: "exit", label: "Exit", icon: TbDoorExit, onClick: exitAttic }]
+    : isCorridor
+    ? [
+        ...DOORS.map((d) => ({ key: d.id, label: d.label, icon: ROOM_ICONS[d.id], onClick: () => enterRoom(d.id) })),
+        // Appears only once all three keys are found: a shortcut to the attic door.
+        ...(atticUnlocked ? [{ key: "attic", label: "ATTIC", icon: TbKey, onClick: enterAttic }] : []),
+      ]
     : [
         { key: "exit", label: "Exit", icon: TbDoorExit, onClick: () => exitToCorridor(space as RoomId) },
         ...DOORS.filter((d) => d.id !== space).map((d) => ({

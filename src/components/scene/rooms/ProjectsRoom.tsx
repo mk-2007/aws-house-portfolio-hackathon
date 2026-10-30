@@ -1,5 +1,6 @@
 "use client";
 
+import KeyPickup from "@/components/scene/props/KeyPickup";
 import { useRef } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Html, Billboard } from "@react-three/drei";
@@ -336,6 +337,9 @@ export default function ProjectsRoom() {
       <WallSconce position={[-PROJECTS_HALF + 0.05, 2.3, 2.5]} rotationY={Math.PI / 2} />
       <WallSconce position={[PROJECTS_HALF - 0.05, 2.3, -2.5]} rotationY={-Math.PI / 2} />
       <WallSconce position={[PROJECTS_HALF - 0.05, 2.3, 2.5]} rotationY={-Math.PI / 2} />
+
+      {/* Key 3 of 3 - above the far right display pedestal */}
+      <KeyPickup id="projects" position={[PROJECTS_HALF - 0.6, 1.68, 2]} />
 
       {/* Exit Door */}
       <ExitDoor />

@@ -6,6 +6,7 @@ import HomeRoom from "./rooms/HomeRoom";
 import SkillsRoom from "./rooms/SkillsRoom";
 import ProjectsRoom from "./rooms/ProjectsRoom";
 import AboutRoom from "./rooms/AboutRoom";
+import AtticRoom from "./rooms/AtticRoom";
 import Player from "./Player";
 import TransitionOverlay from "./TransitionOverlay";
 import SceneErrorBoundary from "./SceneErrorBoundary";
@@ -63,6 +64,11 @@ export default function SceneRoot() {
         {space === "about" && (
           <SceneErrorBoundary label="about">
             <AboutRoom />
+          </SceneErrorBoundary>
+        )}
+        {space === "attic" && (
+          <SceneErrorBoundary label="attic">
+            <AtticRoom />
           </SceneErrorBoundary>
         )}
         <Player />

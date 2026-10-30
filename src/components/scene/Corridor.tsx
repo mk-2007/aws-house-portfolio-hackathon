@@ -18,6 +18,8 @@ import {
 } from "./corridorLayout";
 import { usePlayerStore } from "@/store/playerStore";
 import { useSpaceStore } from "@/store/spaceStore";
+import { useKeysStore, countKeys } from "@/store/keysStore";
+import { ATTIC_DOOR_X, ATTIC_DOOR_STAND } from "./rooms/atticLayout";
 import { useNewspaperTexture } from "./textures/useNewspaperTexture";
 import { createLabelTexture } from "./textures/createLabelTexture";
 import Portrait from "./props/Portrait";
@@ -247,6 +249,88 @@ function Door({
   );
 }
 
+
+/**
+ * The secret attic door, on the corridor's far end wall. Locked until all
+ * three keys are collected: a padlock hangs on it and clicking it nudges the
+ * visitor to go find the keys. Once unlocked the padlock drops away, the
+ * door glows warmly and clicking walks you in like any other door.
+ */
+function AtticDoor() {
+  const collected = useKeysStore((s) => s.collected);
+  const say = useKeysStore((s) => s.say);
+  const setTarget = usePlayerStore((s) => s.setTarget);
+  const setPendingEntry = useSpaceStore((s) => s.setPendingEntry);
+  const n = countKeys(collected);
+  const unlocked = n === 3;
+
+  function handleClick(e: ThreeEvent<MouseEvent>) {
+    e.stopPropagation();
+    if (!unlocked) {
+      say(`The attic is locked. Three brass keys are hidden in this house. You have ${n} of 3.`);
+      return;
+    }
+    setPendingEntry("attic");
+    setTarget([ATTIC_DOOR_STAND.x, ATTIC_DOOR_STAND.z]);
+  }
+
+  return (
+    <group position={[ATTIC_DOOR_X, 0, CORRIDOR_END_Z - 0.02]} rotation={[0, Math.PI, 0]}>
+      <mesh position={[0, DOOR_HEIGHT / 2 + 0.05, -0.01]}>
+        <boxGeometry args={[DOOR_WIDTH + 0.22, DOOR_HEIGHT + 0.14, 0.12]} />
+        <meshStandardMaterial color={WOOD_DARK} roughness={0.8} />
+      </mesh>
+      <mesh
+        position={[0, DOOR_HEIGHT / 2, 0.02]}
+        onClick={handleClick}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = "auto";
+        }}
+        castShadow
+      >
+        <boxGeometry args={[DOOR_WIDTH, DOOR_HEIGHT, 0.08]} />
+        <meshStandardMaterial
+          color={unlocked ? "#5a3d24" : "#2c2118"}
+          roughness={0.6}
+          emissive={unlocked ? "#ffb347" : "#000000"}
+          emissiveIntensity={unlocked ? 0.35 : 0}
+        />
+      </mesh>
+
+      {/* Brass handle */}
+      <mesh position={[0.6, 1.1, 0.09]} castShadow>
+        <cylinderGeometry args={[0.015, 0.015, 0.16, 12]} />
+        <meshStandardMaterial color={BRASS} metalness={0.85} roughness={0.2} />
+      </mesh>
+
+      {/* Padlock, only while locked */}
+      {!unlocked && (
+        <group position={[0.35, 1.05, 0.1]}>
+          <mesh position={[0, -0.06, 0]} castShadow>
+            <boxGeometry args={[0.17, 0.15, 0.06]} />
+            <meshStandardMaterial color={BRASS} metalness={0.85} roughness={0.25} />
+          </mesh>
+          <mesh position={[0, 0.06, 0]}>
+            <torusGeometry args={[0.055, 0.012, 10, 20, Math.PI]} />
+            <meshStandardMaterial color="#b9bcc2" metalness={0.9} roughness={0.25} />
+          </mesh>
+        </group>
+      )}
+
+      {/* Light seeping under/around the door once unlocked */}
+      {unlocked && (
+        <pointLight position={[0, 1.4, 0.8]} color="#ffcf8a" intensity={2.4} distance={5} decay={1.8} />
+      )}
+
+      <DoorSign label="ATTIC" />
+    </group>
+  );
+}
+
 const BEAM_POSITIONS = [-12, -7, -2, 3, 8, 11];
 
 export default function Corridor() {
@@ -330,6 +414,9 @@ export default function Corridor() {
       {DOORS.map((d) => (
         <Door key={d.id} id={d.id} label={d.label} side={d.side} z={d.z} />
       ))}
+
+      {/* Secret attic door - locked until all three keys are found */}
+      <AtticDoor />
     </group>
   );
 }

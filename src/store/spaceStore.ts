@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import type { RoomId } from "@/components/scene/corridorLayout";
 
-export type Space = "corridor" | RoomId;
+export type Space = "corridor" | RoomId | "attic";
+/** Anything you can walk up to a door and enter from the corridor. */
+export type EntryId = RoomId | "attic";
 
 interface Spawn {
   x: number;
@@ -21,7 +23,7 @@ interface SpaceState {
    *  door click in Corridor.tsx (or the room-select menu). Player.tsx
    *  consumes this on arrival — that's what makes "walk into a door"
    *  transition rather than an instant teleport on click. */
-  pendingEntry: RoomId | null;
+  pendingEntry: EntryId | null;
   /** Set by RoomActionMenu's "go straight to another room" button: exits
    *  to the corridor first, and once there, Player.tsx immediately walks
    *  the rest of the way into this room and clears the field. Gives the
@@ -29,7 +31,7 @@ interface SpaceState {
    *  from a single menu click instead of two separate trips. */
   chainTo: RoomId | null;
 
-  setPendingEntry: (id: RoomId | null) => void;
+  setPendingEntry: (id: EntryId | null) => void;
   setChainTo: (id: RoomId | null) => void;
   requestTransition: (space: Space, spawn: Spawn) => void;
   /** Swaps `space` to `requestedSpace` — call at the fade's darkest point. */

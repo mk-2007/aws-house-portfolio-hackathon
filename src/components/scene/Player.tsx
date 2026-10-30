@@ -6,12 +6,13 @@ import * as THREE from "three";
 import { usePlayerStore } from "@/store/playerStore";
 import { useLookStore, ARC_RANGE } from "@/store/lookStore";
 import { useKeyboardMoveStore } from "@/store/keyboardMoveStore";
-import { useSpaceStore, type Space } from "@/store/spaceStore";
-import { SPAWN_POSITION, PLAYER_BOUNDS, EYE_HEIGHT, getCorridorDoorStand, type RoomId } from "./corridorLayout";
+import { useSpaceStore, type Space, type EntryId } from "@/store/spaceStore";
+import { SPAWN_POSITION, PLAYER_BOUNDS, EYE_HEIGHT, getCorridorDoorStand } from "./corridorLayout";
 import { HOME_SPAWN } from "./rooms/homeLayout";
 import { SKILLS_SPAWN } from "./rooms/skillsLayout";
 import { PROJECTS_SPAWN } from "./rooms/projectsLayout";
 import { ABOUT_SPAWN } from "./rooms/aboutLayout";
+import { ATTIC_SPAWN } from "./rooms/atticLayout";
 import Hand from "./character/Hand";
 
 const WALK_SPEED = 3.5; // units/sec, corridor walking (menu- or click-driven)
@@ -26,16 +27,18 @@ const DEFAULT_SPAWN_FOR: Record<Space, { x: number; z: number; yaw: number }> = 
   skills: SKILLS_SPAWN,
   projects: PROJECTS_SPAWN,
   about: ABOUT_SPAWN,
+  attic: ATTIC_SPAWN,
 };
 
 // Where walking into a given door's arrival point should take you. Rooms
 // not listed here just stop the player at the door — that's "not built
 // yet," not a bug.
-const ENTRY_SPAWN_FOR: Partial<Record<RoomId, { x: number; z: number; yaw: number }>> = {
+const ENTRY_SPAWN_FOR: Partial<Record<EntryId, { x: number; z: number; yaw: number }>> = {
   home: HOME_SPAWN,
   skills: SKILLS_SPAWN,
   projects: PROJECTS_SPAWN,
   about: ABOUT_SPAWN,
+  attic: ATTIC_SPAWN,
 };
 
 /**

@@ -11,6 +11,7 @@ import AboutObjectOverlay from "@/components/hud/AboutObjectOverlay";
 import ClassicView from "@/components/classic/ClassicView";
 import SeoContent from "@/components/classic/SeoContent";
 import ViewToggle from "@/components/hud/ViewToggle";
+import KeysHud from "@/components/hud/KeysHud";
 import { useAppStore } from "@/store/appStore";
 import { useSpaceStore } from "@/store/spaceStore";
 
@@ -26,6 +27,7 @@ export default function Home() {
       <SeoContent />
       {view === "classic" && <ClassicView />}
       {view === "house" && <ViewToggle />}
+      {view === "house" && inHouse && <KeysHud />}
       {stage === "welcome" && <WelcomeScreen />}
       {/* Corridor stays mounted the whole time — no reload when the
           welcome screen fades away, it's just been covered until now. */}

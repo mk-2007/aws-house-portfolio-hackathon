@@ -1,5 +1,6 @@
 import { getCorridorDoorStand, type RoomId } from "@/components/scene/corridorLayout";
 import { usePlayerStore } from "@/store/playerStore";
+import { ATTIC_EXIT_SPAWN, ATTIC_DOOR_STAND } from "@/components/scene/rooms/atticLayout";
 import { useSpaceStore } from "@/store/spaceStore";
 
 /** Walk to a door from the corridor and enter it on arrival. */
@@ -22,4 +23,15 @@ export function jumpToRoom(from: RoomId, to: RoomId) {
   const stand = getCorridorDoorStand(from);
   useSpaceStore.getState().requestTransition("corridor", stand);
   useSpaceStore.getState().setChainTo(to);
+}
+
+/** Leave the secret attic, back to the corridor's far end. */
+export function exitAttic() {
+  useSpaceStore.getState().requestTransition("corridor", ATTIC_EXIT_SPAWN);
+}
+
+/** Walk to the attic door and go in. Callers must check the keys first. */
+export function enterAttic() {
+  useSpaceStore.getState().setPendingEntry("attic");
+  usePlayerStore.getState().setTarget([ATTIC_DOOR_STAND.x, ATTIC_DOOR_STAND.z]);
 }

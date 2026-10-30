@@ -11,7 +11,15 @@ import {
  * visible inside ClassicView, and hidden inside SeoContent. Real headings
  * (h1/h2/h3), lists and links are what crawlers and screen readers read.
  */
-export default function ContentSections({ withLinks = true }: { withLinks?: boolean }) {
+export default function ContentSections({
+  withLinks = true,
+  idPrefix = "",
+}: {
+  withLinks?: boolean;
+  /** Prefix for element ids, so the hidden SEO copy never duplicates the
+   *  visible copy's ids (duplicate ids break #anchor navigation). */
+  idPrefix?: string;
+}) {
   return (
     <>
       <header>
@@ -21,8 +29,8 @@ export default function ContentSections({ withLinks = true }: { withLinks?: bool
         <p>&ldquo;{PERSON.motto}&rdquo;</p>
       </header>
 
-      <section id="about" aria-labelledby="about-h">
-        <h2 id="about-h">About Me</h2>
+      <section id={`${idPrefix}about`} aria-labelledby={`${idPrefix}about-h`}>
+        <h2 id={`${idPrefix}about-h`}>About Me</h2>
         {ABOUT.intro.map((p) => (
           <p key={p}>{p}</p>
         ))}
@@ -36,8 +44,8 @@ export default function ContentSections({ withLinks = true }: { withLinks?: bool
         </ol>
       </section>
 
-      <section id="skills" aria-labelledby="skills-h">
-        <h2 id="skills-h">Skills &amp; Tech Superpowers</h2>
+      <section id={`${idPrefix}skills`} aria-labelledby={`${idPrefix}skills-h`}>
+        <h2 id={`${idPrefix}skills-h`}>Skills &amp; Tech Superpowers</h2>
         {SKILL_GROUPS.map((g) => (
           <div key={g.title}>
             <h3>{g.title}</h3>
@@ -50,8 +58,8 @@ export default function ContentSections({ withLinks = true }: { withLinks?: bool
         ))}
       </section>
 
-      <section id="projects" aria-labelledby="projects-h">
-        <h2 id="projects-h">Projects</h2>
+      <section id={`${idPrefix}projects`} aria-labelledby={`${idPrefix}projects-h`}>
+        <h2 id={`${idPrefix}projects-h`}>Projects</h2>
         {PROJECT_LIST.map((p) => (
           <article key={p.id}>
             <h3>{p.name}</h3>
@@ -71,8 +79,8 @@ export default function ContentSections({ withLinks = true }: { withLinks?: bool
         ))}
       </section>
 
-      <section id="contact" aria-labelledby="contact-h">
-        <h2 id="contact-h">Contact</h2>
+      <section id={`${idPrefix}contact`} aria-labelledby={`${idPrefix}contact-h`}>
+        <h2 id={`${idPrefix}contact-h`}>Contact</h2>
         <ul>
           {LINKS.map((l) => (
             <li key={l.label}>

@@ -15,6 +15,7 @@ import { useSpaceStore } from "@/store/spaceStore";
 import { useNewspaperTexture } from "@/components/scene/textures/useNewspaperTexture";
 import FramedWallPortrait from "@/components/scene/props/FramedWallPortrait";
 import { TechTag } from "@/components/scene/props/techIcons";
+import KeyPickup from "@/components/scene/props/KeyPickup";
 import FloorLamp from "@/components/scene/props/FloorLamp";
 import { WallSconce } from "@/components/scene/props/CorridorDecor";
 
@@ -460,6 +461,9 @@ export default function SkillsRoom() {
       <FloorLamp x={SKILLS_HALF - 0.75} z={-SKILLS_HALF + 0.75} />
       <FloorLamp x={-SKILLS_HALF + 0.75} z={SKILLS_HALF - 0.75} />
       <FloorLamp x={SKILLS_HALF - 0.75} z={SKILLS_HALF - 0.75} />
+
+      {/* Key 2 of 3 - resting on top of the right-hand server rack */}
+      <KeyPickup id="skills" position={[3.2, 2.5, -SKILLS_HALF + 0.35]} />
 
       {/* Exit Door */}
       <ExitDoor />
