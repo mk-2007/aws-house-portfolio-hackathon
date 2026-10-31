@@ -52,10 +52,15 @@ const fragment = /* glsl */ `
     density *= mix(1.0, smoothstep(0.32, 0.68, dust), 0.85);
 
     float t = fbm(d * 1.5 + q);
-    vec3 deepBlue = vec3(0.05, 0.12, 0.42);
-    vec3 magenta  = vec3(0.62, 0.12, 0.52);
-    vec3 hotCore  = vec3(1.00, 0.58, 0.28);
-    vec3 col = mix(deepBlue, magenta, smoothstep(0.25, 0.7, t));
+    // Colour grading by palette: cool teal and indigo for most of the gas,
+    // a touch of violet, and amber only in the hottest cores. Teal against
+    // amber is the classic cinematic "teal and orange" contrast.
+    vec3 deepTeal = vec3(0.02, 0.13, 0.27);
+    vec3 indigo   = vec3(0.16, 0.14, 0.52);
+    vec3 teal     = vec3(0.04, 0.46, 0.56);
+    vec3 hotCore  = vec3(1.00, 0.62, 0.24);
+    vec3 col = mix(deepTeal, indigo, smoothstep(0.25, 0.75, t));
+    col = mix(col, teal, smoothstep(0.52, 0.82, fbm(d * 3.1 + q)) * 0.55);
     col = mix(col, hotCore, smoothstep(0.5, 0.95, n * band * 1.9));
     col *= density * 1.55;
 
