@@ -399,7 +399,7 @@ export default function Corridor() {
       {/* Standing Floor Lamps placed safely in wall alcoves (clear of doors & paths) */}
       <FloorLamp x={WALL_X - 0.45} z={-11} />
       <FloorLamp x={-WALL_X + 0.45} z={1} />
-      <FloorLamp x={WALL_X - 0.45} z={10.5} />
+      <FloorLamp x={-WALL_X + 0.45} z={10.8} />
 
       {/* Modern Entryway Seating Bench */}
       <EntrywayBench position={[WALL_X - 0.55, 0, 7]} rotationY={-Math.PI / 2} />
