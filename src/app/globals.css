@@ -87,3 +87,11 @@ body {
 @keyframes keysTextGlow { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
 .keys-pulse-text { animation: keysTextGlow 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .keys-pulse-text { animation: none; } }
+
+/* Intro gate button: a slow cyan halo pulse invites the click. */
+@keyframes gateHalo {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.0), 0 0 18px rgba(34, 211, 238, 0.45); }
+  50% { box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.14), 0 0 34px rgba(34, 211, 238, 0.8); }
+}
+.gate-button { animation: gateHalo 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .gate-button { animation: none; } }
