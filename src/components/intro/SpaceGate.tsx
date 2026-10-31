@@ -97,7 +97,7 @@ export default function SpaceGate() {
         style={{ opacity: 0 }}
       >
         <div
-          className="mb-3 font-[family-name:var(--font-bacley)] uppercase text-[#ffb3d4]/90"
+          className="mb-3 font-[family-name:var(--font-bacley)] uppercase text-[#7fe0e4]/90"
           style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.85rem)", letterSpacing: "0.5em" }}
         >
           Signal received
@@ -117,7 +117,7 @@ export default function SpaceGate() {
         style={{ opacity: 0, pointerEvents: ctaVisible ? "auto" : "none" }}
       >
         <p
-          className="font-[family-name:var(--font-bacley)] uppercase text-center text-[#fff4fa]"
+          className="font-[family-name:var(--font-bacley)] uppercase text-center text-[#fff7ea]"
           style={{ fontSize: "clamp(1rem, 2.6vw, 1.7rem)", letterSpacing: "0.22em", textShadow: "0 2px 18px rgba(0,0,0,0.9)" }}
         >
           Come and get your surprise
@@ -125,7 +125,7 @@ export default function SpaceGate() {
         <button
           onClick={handleEnter}
           disabled={entering}
-          className="gate-button font-[family-name:var(--font-bacley)] uppercase tracking-[0.3em] text-[#1a0612] bg-[#ffd6e8] px-8 py-3 rounded-sm hover:bg-white transition-colors disabled:opacity-60"
+          className="gate-button font-[family-name:var(--font-bacley)] uppercase tracking-[0.3em] text-[#1c1206] bg-[#ffd9a0] px-8 py-3 rounded-sm hover:bg-white transition-colors disabled:opacity-60"
           style={{ fontSize: "clamp(0.8rem, 1.6vw, 1.05rem)" }}
         >
           Open the door

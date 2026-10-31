@@ -3,7 +3,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stars, Sparkles } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette, Noise, DepthOfField, ChromaticAberration } from "@react-three/postprocessing";
+import {
+  EffectComposer,
+  Bloom,
+  Vignette,
+  Noise,
+  DepthOfField,
+  ChromaticAberration,
+  ToneMapping,
+  HueSaturation,
+  BrightnessContrast,
+  SMAA,
+} from "@react-three/postprocessing";
+import { ToneMappingMode } from "postprocessing";
 import * as THREE from "three";
 import { useNebulaTexture } from "@/components/space/useNebulaTexture";
 import Planet from "@/components/space/Planet";
@@ -155,6 +167,7 @@ export default function SpaceDoorScene({
 
   return (
     <Canvas
+      shadows
       dpr={[1, 1.5]}
       camera={{ position: [-17, 8.5, 37], fov: 54, near: 0.1, far: 1200 }}
       gl={{ antialias: false, powerPreference: "high-performance" }}
@@ -165,11 +178,28 @@ export default function SpaceDoorScene({
       <Stars radius={300} depth={80} count={5000} factor={6} saturation={0.5} fade speed={0.4} />
 
       {/* the key light (sun) and a faint cool fill from the opposite side */}
-      <directionalLight position={[keyDir.x * 30, keyDir.y * 30, keyDir.z * 30 + 20]} intensity={3.4} color="#ffe6c2" />
+      <directionalLight position={[keyDir.x * 30, keyDir.y * 30, keyDir.z * 30 + 20]} intensity={2.6} color="#ffe6c2" />
+      {/* the shadow-casting key light for the door, from front-left and above:
+          shadows are what turn flat shapes into solid objects */}
+      <directionalLight
+        castShadow
+        position={[-4.5, 6, 8]}
+        intensity={2.0}
+        color="#ffe3c2"
+        shadow-mapSize={fancy ? [2048, 2048] : [1024, 1024]}
+        shadow-camera-left={-5}
+        shadow-camera-right={5}
+        shadow-camera-top={5}
+        shadow-camera-bottom={-5}
+        shadow-camera-near={1}
+        shadow-camera-far={30}
+        shadow-bias={-0.0004}
+        shadow-normalBias={0.03}
+      />
       <directionalLight position={[-12, -3, 8]} intensity={0.55} color="#6f8bff" />
       <ambientLight intensity={0.1} color="#5566aa" />
       {/* soft warm light from the camera side, so the door face is not a silhouette */}
-      <pointLight position={[-2.5, 2.2, 5.5]} color="#ffe9d6" intensity={34} distance={11} decay={2} />
+      <pointLight position={[-2.5, 2.2, 5.5]} color="#ffe9d6" intensity={10} distance={11} decay={2} />
 
       <Sun position={SUN_POS} />
       <Planet position={PLANET_POS} radius={14} sunDir={sunDir} />
@@ -185,7 +215,7 @@ export default function SpaceDoorScene({
       <AnywhereDoor progress={progress} onOpen={onOpen} />
       <CameraRig progress={progress} />
 
-      <EffectComposer multisampling={0}>
+      <EffectComposer multisampling={fancy ? 4 : 0}>
         <Bloom intensity={0.9} luminanceThreshold={0.72} luminanceSmoothing={0.25} mipmapBlur />
         {fancy ? (
           <DepthOfField target={[0, 0, 0]} focalLength={0.06} bokehScale={3.2} height={520} />
@@ -193,7 +223,13 @@ export default function SpaceDoorScene({
           <></>
         )}
         {fancy ? <ChromaticAberration offset={new THREE.Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} /> : <></>}
-        <Noise opacity={0.045} />
+        {/* the film look: a tone curve (so highlights roll off instead of
+            clipping), a slight desaturation and contrast lift, then grain */}
+        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+        <HueSaturation saturation={-0.08} />
+        <BrightnessContrast brightness={-0.02} contrast={0.12} />
+        {fancy ? <></> : <SMAA />}
+        <Noise opacity={0.04} />
         <Vignette eskil={false} offset={0.2} darkness={0.85} />
       </EffectComposer>
     </Canvas>
