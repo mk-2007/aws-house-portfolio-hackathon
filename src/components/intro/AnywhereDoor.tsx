@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
+import DoorIsland from "./DoorIsland";
 
 /**
  * A lone pink door floating in space: step through and you arrive somewhere
@@ -16,6 +17,8 @@ import * as THREE from "three";
  * panel's centre goes.
  */
 export interface DoorProgress {
+  /** drone flight 0..1 (camera arriving at the door) */
+  intro: number;
   /** knob turn 0..1 */
   knob: number;
   /** door swing 0..1 */
@@ -27,10 +30,64 @@ export interface DoorProgress {
 const W = 1.5; // door width
 const H = 2.8; // door height
 const T = 0.1; // door thickness
-const PINK = "#ee5f9b";
-const PINK_DEEP = "#cf4682";
-const FRAME = "#e9d3dd";
+const PINK = "#d85a92";
+const PINK_DEEP = "#b44478";
+const FRAME = "#2b2420"; // dark wood, so it reads as a doorway and not a wall slab
 const GOLD = "#e7b64b";
+
+/** Painted-wood surface: faint vertical grain plus speckle, used as a bump map. */
+function makePaintTexture() {
+  const c = document.createElement("canvas");
+  c.width = 256;
+  c.height = 512;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#808080";
+  g.fillRect(0, 0, 256, 512);
+  for (let i = 0; i < 260; i++) {
+    const x = Math.random() * 256;
+    const light = Math.random() > 0.5;
+    g.strokeStyle = light
+      ? `rgba(255,255,255,${0.03 + Math.random() * 0.06})`
+      : `rgba(0,0,0,${0.04 + Math.random() * 0.07})`;
+    g.lineWidth = 0.6 + Math.random() * 1.6;
+    g.beginPath();
+    g.moveTo(x, 0);
+    g.bezierCurveTo(x + 6, 150, x - 6, 350, x + 2, 512);
+    g.stroke();
+  }
+  for (let i = 0; i < 2200; i++) {
+    g.fillStyle = Math.random() > 0.5 ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
+    g.fillRect(Math.random() * 256, Math.random() * 512, 1.4, 1.4);
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
+/** A small brass nameplate engraved with initials. */
+function makePlateTexture() {
+  const c = document.createElement("canvas");
+  c.width = 256;
+  c.height = 110;
+  const g = c.getContext("2d")!;
+  const grad = g.createLinearGradient(0, 0, 256, 110);
+  grad.addColorStop(0, "#b88a2e");
+  grad.addColorStop(0.5, "#f1cf78");
+  grad.addColorStop(1, "#a9791f");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 256, 110);
+  g.strokeStyle = "rgba(60,38,6,0.7)";
+  g.lineWidth = 5;
+  g.strokeRect(6, 6, 244, 98);
+  g.fillStyle = "#3a2504";
+  g.font = "bold 54px Georgia, serif";
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  g.fillText("M . K", 128, 58);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
 
 const glowFragment = /* glsl */ `
   uniform float uOpen;
@@ -66,6 +123,8 @@ export default function AnywhereDoor({
   const halo = useRef<THREE.PointLight>(null);
   const [hover, setHover] = useState(false);
   const uniforms = useMemo(() => ({ uOpen: { value: 0 }, uTime: { value: 0 } }), []);
+  const paint = useMemo(() => makePaintTexture(), []);
+  const plate = useMemo(() => makePlateTexture(), []);
 
   useFrame(({ clock }) => {
     const p = progress.current;
@@ -75,7 +134,7 @@ export default function AnywhereDoor({
     uniforms.uTime.value = clock.getElapsedTime();
     if (panelMat.current) {
       const pulse = 0.5 + 0.5 * Math.sin(clock.getElapsedTime() * 2.2);
-      panelMat.current.emissiveIntensity = hover ? 0.55 : 0.12 + pulse * 0.08;
+      panelMat.current.emissiveIntensity = hover ? 0.35 : 0.03 + pulse * 0.03;
     }
     if (halo.current) halo.current.intensity = p.open * 60;
   });
@@ -105,16 +164,27 @@ export default function AnywhereDoor({
         </mesh>
         <pointLight ref={halo} position={[0, 0, 0.8]} color="#ffe2b0" distance={14} decay={1.4} intensity={0} />
 
-        {/* frame: two posts and a lintel */}
+        {/* the island the door stands on, with a stone step and a lantern */}
+        <DoorIsland top={-H / 2 - 0.05} />
+
+        {/* frame: dark wood posts, a lintel with a small cornice, a stone threshold */}
         {[-1, 1].map((s) => (
-          <mesh key={s} position={[s * (W / 2 + 0.07), 0, 0]} castShadow>
-            <boxGeometry args={[0.14, H + 0.14, 0.26]} />
-            <meshStandardMaterial color={FRAME} roughness={0.55} metalness={0.05} />
+          <mesh key={s} position={[s * (W / 2 + 0.06), 0, 0]}>
+            <boxGeometry args={[0.12, H + 0.1, 0.24]} />
+            <meshStandardMaterial color={FRAME} roughness={0.75} metalness={0.05} bumpMap={paint} bumpScale={1.5} />
           </mesh>
         ))}
-        <mesh position={[0, H / 2 + 0.07, 0]}>
-          <boxGeometry args={[W + 0.28, 0.14, 0.26]} />
-          <meshStandardMaterial color={FRAME} roughness={0.55} metalness={0.05} />
+        <mesh position={[0, H / 2 + 0.06, 0]}>
+          <boxGeometry args={[W + 0.24, 0.12, 0.24]} />
+          <meshStandardMaterial color={FRAME} roughness={0.75} metalness={0.05} bumpMap={paint} bumpScale={1.5} />
+        </mesh>
+        <mesh position={[0, H / 2 + 0.16, 0.02]}>
+          <boxGeometry args={[W + 0.5, 0.08, 0.34]} />
+          <meshStandardMaterial color="#1f1a17" roughness={0.8} />
+        </mesh>
+        <mesh position={[0, -H / 2 - 0.03, 0.04]}>
+          <boxGeometry args={[W + 0.3, 0.06, 0.36]} />
+          <meshStandardMaterial color="#77716a" roughness={0.9} />
         </mesh>
 
         {/* hinge on the left edge: rotating this group swings the door */}
@@ -125,10 +195,12 @@ export default function AnywhereDoor({
               <meshStandardMaterial
                 ref={panelMat}
                 color={PINK}
-                roughness={0.42}
-                metalness={0.12}
+                roughness={0.5}
+                metalness={0.1}
+                bumpMap={paint}
+                bumpScale={1.2}
                 emissive={PINK}
-                emissiveIntensity={0.12}
+                emissiveIntensity={0.03}
               />
             </mesh>
             {/* two recessed panels, as on a classic painted door */}
@@ -138,6 +210,11 @@ export default function AnywhereDoor({
                 <meshStandardMaterial color={PINK_DEEP} roughness={0.5} metalness={0.1} />
               </mesh>
             ))}
+            {/* brass nameplate */}
+            <mesh position={[0, H * 0.4 + 0.02, T / 2 + 0.012]}>
+              <planeGeometry args={[0.46, 0.2]} />
+              <meshStandardMaterial map={plate} metalness={0.85} roughness={0.35} />
+            </mesh>
             {/* gold knob on a backplate; turning is animated */}
             <group position={[W / 2 - 0.2, -0.06, T / 2]}>
               <mesh position={[0, 0, 0.012]} rotation={[Math.PI / 2, 0, 0]}>
