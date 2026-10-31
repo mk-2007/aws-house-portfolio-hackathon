@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stars, Sparkles } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette, Noise } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, Noise, DepthOfField, ChromaticAberration } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useNebulaTexture } from "@/components/space/useNebulaTexture";
 import Planet from "@/components/space/Planet";
 import Sun from "@/components/space/Sun";
-import Rocks from "@/components/space/Rocks";
+import Rocks, { type RockPlacement } from "@/components/space/Rocks";
 import AnywhereDoor, { type DoorProgress } from "./AnywhereDoor";
 
 /**
@@ -49,28 +49,90 @@ function Sky() {
   );
 }
 
-/** Slow handheld-camera drift, pointer parallax, and the final dive through the door. */
-function CameraRig({ progress }: { progress: React.RefObject<DoorProgress> }) {
-  useFrame(({ camera, pointer, size, clock }) => {
-    const f = progress.current.fly;
-    const t = clock.getElapsedTime();
-    // pull back on tall (phone) screens so the whole door still fits
-    const aspect = size.width / size.height;
-    const baseZ = Math.max(9.5, 4.8 / aspect);
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+const smooth = (x: number) => x * x * (3 - 2 * x);
 
-    const drift = 1 - f;
-    const tx = (pointer.x * 0.7 + Math.sin(t * 0.21) * 0.25) * drift;
-    const ty = (pointer.y * 0.4 + Math.cos(t * 0.17) * 0.15) * drift;
-    camera.position.x += (tx - camera.position.x) * 0.04;
-    camera.position.y += (ty - camera.position.y) * 0.04;
-    camera.position.z = baseZ - f * (baseZ + 1.4);
-    // aim slightly below the door so it sits above the text block
-    camera.lookAt(0, -0.55 * drift, 0);
+/**
+ * The "drone" shot. The camera flies along a smooth curve (a Catmull-Rom
+ * spline through hand-placed points), swinging in from far away, high and to
+ * the left, past drifting rocks, and settling in front of the door. While it
+ * flies it also:
+ *  - looks first toward the planet, then pans to the door (a reveal),
+ *  - banks slightly through the turn, like a real drone leaning into a curve,
+ *  - narrows its field of view as it arrives.
+ * Because the rocks sit at different distances, they slide past at different
+ * speeds (parallax), which is the strongest cue that the space is truly 3D.
+ *
+ * `progress.intro` is tweened 0..1 by GSAP. After arrival the camera idles
+ * with a gentle breathing drift and pointer parallax, then `fly` dives it
+ * through the open door.
+ */
+function CameraRig({ progress }: { progress: React.RefObject<DoorProgress> }) {
+  const size = useThree((s) => s.size);
+  const aspect = size.width / size.height;
+  const baseZ = Math.max(9.5, 4.8 / aspect);
+
+  const curve = useMemo(
+    () =>
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-17, 8.5, baseZ + 28),
+        new THREE.Vector3(-8.5, 5.0, baseZ + 18),
+        new THREE.Vector3(-3.2, 2.2, baseZ + 8.5),
+        new THREE.Vector3(-0.6, 0.55, baseZ + 2.2),
+        new THREE.Vector3(0, 0.1, baseZ),
+      ]),
+    [baseZ]
+  );
+  const planetLook = useMemo(() => new THREE.Vector3(-13, -4, -30), []);
+  const doorLook = useMemo(() => new THREE.Vector3(0, -0.3, 0), []);
+  const tmp = useMemo(() => new THREE.Vector3(), []);
+  const look = useMemo(() => new THREE.Vector3(), []);
+
+  useFrame(({ camera, pointer, clock }) => {
+    const { intro, fly } = progress.current;
+    const t = clock.getElapsedTime();
+    curve.getPoint(clamp01(intro), tmp);
+
+    // after arrival: breathing drift + pointer parallax
+    const idle = smooth(clamp01((intro - 0.85) / 0.15)) * (1 - fly);
+    tmp.x += (pointer.x * 0.7 + Math.sin(t * 0.21) * 0.25) * idle;
+    tmp.y += (pointer.y * 0.4 + Math.cos(t * 0.17) * 0.15) * idle;
+
+    // the dive: from the resting spot straight through the doorway
+    tmp.z = tmp.z + (-1.4 - tmp.z) * fly;
+    tmp.x *= 1 - fly * 0.6;
+    camera.position.copy(tmp);
+
+    const pan = smooth(clamp01((intro - 0.2) / 0.7));
+    look.lerpVectors(planetLook, doorLook, pan);
+    look.y -= 0.95 * (1 - fly); // frame the door high, leaving room for the text below
+    camera.lookAt(look);
+
+    // lean into the curve, then level out
+    camera.rotateZ(Math.sin(Math.PI * clamp01(intro)) * 0.07 * (1 - fly));
+
     const pc = camera as THREE.PerspectiveCamera;
-    pc.fov = 44 + f * 34;
+    pc.fov = 54 - 10 * smooth(clamp01(intro)) + fly * 34;
     pc.updateProjectionMatrix();
   });
   return null;
+}
+
+/** Rocks along the flight path: close ones whip past, far ones drift slowly. */
+function flybyRocks(): RockPlacement[] {
+  const pts: [number, number, number, number][] = [
+    [-9, 3.5, 24, 0.9],
+    [-4.5, -2.2, 21, 0.6],
+    [2.8, 3.2, 19, 0.7],
+    [6.5, 0.5, 26, 1.1],
+    [-12, -1, 31, 1.3],
+    [3.8, -3.1, 14, 0.45],
+    [-6.2, 2.4, 13, 0.35],
+    [9.5, 4.2, 18, 0.55],
+    [-2.4, 4.6, 29, 0.8],
+    [12.5, -2.5, 23, 1.0],
+  ];
+  return pts.map(([x, y, z, s]) => ({ pos: [x, y, z], s }));
 }
 
 export default function SpaceDoorScene({
@@ -85,11 +147,16 @@ export default function SpaceDoorScene({
     []
   );
   const keyDir = useMemo(() => new THREE.Vector3(...SUN_POS).normalize(), []);
+  const flyby = useMemo(() => flybyRocks(), []);
+  // Depth of field and chromatic fringing are the costly lens effects: keep
+  // them for larger screens and leave phones with the cheaper bloom + grain.
+  const [fancy, setFancy] = useState(false);
+  useEffect(() => setFancy(window.innerWidth >= 900), []);
 
   return (
     <Canvas
       dpr={[1, 1.5]}
-      camera={{ position: [0, 0, 9.5], fov: 44, near: 0.1, far: 1200 }}
+      camera={{ position: [-17, 8.5, 37], fov: 54, near: 0.1, far: 1200 }}
       gl={{ antialias: false, powerPreference: "high-performance" }}
       style={{ position: "absolute", inset: 0 }}
     >
@@ -112,6 +179,7 @@ export default function SpaceDoorScene({
       </mesh>
 
       <Rocks />
+      <Rocks placements={flyby} />
       <Sparkles count={70} scale={[11, 7, 6]} size={2.4} speed={0.25} opacity={0.55} color="#ffd9ec" />
 
       <AnywhereDoor progress={progress} onOpen={onOpen} />
@@ -119,6 +187,12 @@ export default function SpaceDoorScene({
 
       <EffectComposer multisampling={0}>
         <Bloom intensity={0.9} luminanceThreshold={0.72} luminanceSmoothing={0.25} mipmapBlur />
+        {fancy ? (
+          <DepthOfField target={[0, 0, 0]} focalLength={0.06} bokehScale={3.2} height={520} />
+        ) : (
+          <></>
+        )}
+        {fancy ? <ChromaticAberration offset={new THREE.Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} /> : <></>}
         <Noise opacity={0.045} />
         <Vignette eskil={false} offset={0.2} darkness={0.85} />
       </EffectComposer>

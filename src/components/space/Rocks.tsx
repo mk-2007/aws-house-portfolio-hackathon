@@ -29,21 +29,28 @@ function makeRockGeometry(seed: number) {
 }
 
 /** Drifting rocks around the door. They are lit by the sun, which sells the depth. */
-export default function Rocks({ count = 14 }: { count?: number }) {
+export interface RockPlacement {
+  pos: [number, number, number];
+  s: number;
+}
+
+export default function Rocks({ count = 14, placements }: { count?: number; placements?: RockPlacement[] }) {
   const group = useRef<THREE.Group>(null);
   const rocks = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => {
+      Array.from({ length: placements ? placements.length : count }, (_, i) => {
         const a = rand(i + 1) * Math.PI * 2;
         const r = 4.5 + rand(i + 20) * 9;
         return {
           geo: makeRockGeometry(i + 3),
-          pos: [Math.cos(a) * r, (rand(i + 40) - 0.5) * 7, -3 - rand(i + 60) * 14] as [number, number, number],
-          s: 0.14 + rand(i + 80) * 0.7,
+          pos: placements
+            ? placements[i].pos
+            : ([Math.cos(a) * r, (rand(i + 40) - 0.5) * 7, -3 - rand(i + 60) * 14] as [number, number, number]),
+          s: placements ? placements[i].s : 0.14 + rand(i + 80) * 0.7,
           spin: [rand(i + 100) * 0.3, rand(i + 120) * 0.3, rand(i + 140) * 0.2] as [number, number, number],
         };
       }),
-    [count]
+    [count, placements]
   );
   useFrame((_, dt) => {
     group.current?.children.forEach((m, i) => {
