@@ -1,7 +1,7 @@
 # Mahandar Kumar — The House (3D Game Portfolio)
 
-An interactive 3D portfolio you **walk through like a game**. Open the gate in
-space, enter a house, explore rooms about me (Home, Skills, Projects, About),
+An interactive 3D portfolio you **walk through like a game**. Open a lone door
+floating in space, step through it into a house, explore rooms about me (Home, Skills, Projects, About),
 and hunt for hidden keys that open a secret vault.
 
 Built for the **AWS Student Portfolio Hackathon** and hosted on **AWS Amplify Hosting**.
@@ -63,7 +63,8 @@ npm run build    # static export into ./out
 src/
   app/             Next.js entry (layout, metadata, page)
   components/
-    intro/         space gate intro (3D scene + overlay)
+    intro/         the floating door intro (3D scene + overlay)
+    space/         shared procedural space: nebula, planet, sun, rocks
     scene/         corridor, rooms (Home/Skills/Projects/About/Attic), props
     hud/           navigation menu, key badge, overlays
     classic/       plain-HTML Classic view + hidden SEO copy

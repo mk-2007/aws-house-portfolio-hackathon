@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useAppStore } from "@/store/appStore";
-import SpaceGateScene, { type GateProgress } from "./SpaceGateScene";
+import SpaceDoorScene from "./SpaceDoorScene";
+import type { DoorProgress } from "./AnywhereDoor";
 
 /**
- * First screen: a dark gate floating in space.
+ * First screen: a lone pink door floating in a cinematic corner of space.
  *
  * Two layers:
- *  1. SpaceGateScene - the 3D gate (WebGL canvas, transparent so the CSS
- *     nebula behind it shows through).
+ *  1. SpaceDoorScene - the 3D scene: nebula sky, planet, sun and the door.
  *  2. This component's DOM text and button on top. DOM text stays crisp,
  *     selectable and screen-reader friendly, which a 3D-drawn label is not.
  *
@@ -21,7 +21,7 @@ import SpaceGateScene, { type GateProgress } from "./SpaceGateScene";
  */
 export default function SpaceGate() {
   const enterCorridor = useAppStore((s) => s.enterCorridor);
-  const progress = useRef<GateProgress>({ open: 0, fly: 0 });
+  const progress = useRef<DoorProgress>({ knob: 0, open: 0, fly: 0 });
   const rootRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
@@ -45,9 +45,11 @@ export default function SpaceGate() {
       tl.to(flashRef.current, { opacity: 1, duration: 0.4 });
       return;
     }
-    tl.to(progress.current, { open: 1, duration: 1.5, ease: "power2.inOut" }, 0.15)
-      .to(progress.current, { fly: 1, duration: 2.1, ease: "power3.in" }, 1.05)
-      .to(flashRef.current, { opacity: 1, duration: 0.45, ease: "power2.in" }, 2.7);
+    // knob turns, the door swings open, then the camera dives through the light
+    tl.to(progress.current, { knob: 1, duration: 0.4, ease: "power2.out" }, 0.1)
+      .to(progress.current, { open: 1, duration: 1.4, ease: "power2.inOut" }, 0.45)
+      .to(progress.current, { fly: 1, duration: 1.9, ease: "power3.in" }, 1.5)
+      .to(flashRef.current, { opacity: 1, duration: 0.4, ease: "power2.in" }, 2.95);
   }
 
   return (
@@ -57,16 +59,11 @@ export default function SpaceGate() {
       style={{
         opacity: mounted ? 1 : 0,
         background:
-          "radial-gradient(ellipse at 50% 42%, #1a1040 0%, #0a0820 45%, #04030c 100%)",
+          "#02030a",
       }}
     >
-      <SpaceGateScene progress={progress} />
+      <SpaceDoorScene progress={progress} onOpen={handleEnter} />
 
-      {/* soft vignette so the edges fall into darkness */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at center, transparent 50%, rgba(2,2,8,0.75) 100%)" }}
-      />
 
       <div
         ref={textRef}
@@ -74,7 +71,7 @@ export default function SpaceGate() {
       >
         <div className="text-center">
           <div
-            className="mb-2 font-[family-name:var(--font-bacley)] uppercase text-[#22d3ee]/80"
+            className="mb-2 font-[family-name:var(--font-bacley)] uppercase text-[#ffb3d4]/90"
             style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.85rem)", letterSpacing: "0.5em" }}
           >
             Signal received
@@ -97,13 +94,13 @@ export default function SpaceGate() {
           <button
             onClick={handleEnter}
             disabled={entering}
-            className="gate-button font-[family-name:var(--font-bacley)] uppercase tracking-[0.3em] text-[#04030c] bg-[#22d3ee] px-8 py-3 rounded-sm hover:bg-white transition-colors disabled:opacity-60"
+            className="gate-button font-[family-name:var(--font-bacley)] uppercase tracking-[0.3em] text-[#1a0612] bg-[#ffd6e8] px-8 py-3 rounded-sm hover:bg-white transition-colors disabled:opacity-60"
             style={{ fontSize: "clamp(0.8rem, 1.6vw, 1.05rem)" }}
           >
-            Open the gate
+            Open the door
           </button>
           <p className="text-[#9fb4d9]/80 text-xs tracking-widest uppercase">
-            Three keys &bull; one vault &bull; an anonymous message
+            Three keys &bull; one vault &bull; a message from Anonymous
           </p>
           <button
             onClick={enterCorridor}
