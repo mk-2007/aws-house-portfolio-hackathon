@@ -1,7 +1,7 @@
 "use client";
 
 import SceneRoot from "@/components/scene/SceneRoot";
-import WelcomeScreen from "@/components/welcome/WelcomeScreen";
+import SpaceGate from "@/components/intro/SpaceGate";
 import NavigationMenu from "@/components/hud/NavigationMenu";
 import ArcLookControl from "@/components/hud/ArcLookControl";
 import KeyboardControls from "@/components/hud/KeyboardControls";
@@ -28,7 +28,7 @@ export default function Home() {
       {view === "classic" && <ClassicView />}
       {view === "house" && <ViewToggle />}
       {view === "house" && inHouse && <KeysHud />}
-      {stage === "welcome" && <WelcomeScreen />}
+      {stage === "welcome" && <SpaceGate />}
       {/* Corridor stays mounted the whole time — no reload when the
           welcome screen fades away, it's just been covered until now. */}
       <div className="flex-1">
