@@ -8,3 +8,4 @@ claude.md
 
 # static export output
 /out
+*.tsbuildinfo
