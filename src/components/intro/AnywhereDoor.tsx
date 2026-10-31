@@ -30,8 +30,9 @@ export interface DoorProgress {
 const W = 1.5; // door width
 const H = 2.8; // door height
 const T = 0.1; // door thickness
-const PINK = "#d85a92";
-const PINK_DEEP = "#b44478";
+const PINK = "#b9567f"; // a muted painted rose: the one warm accent in a cool scene
+const PINK_DEEP = "#98406a";
+const PINK_LIGHT = "#cf7396";
 const FRAME = "#2b2420"; // dark wood, so it reads as a doorway and not a wall slab
 const GOLD = "#e7b64b";
 
@@ -119,7 +120,7 @@ export default function AnywhereDoor({
 }) {
   const hinge = useRef<THREE.Group>(null);
   const knob = useRef<THREE.Group>(null);
-  const panelMat = useRef<THREE.MeshStandardMaterial>(null);
+  const panelMat = useRef<THREE.MeshPhysicalMaterial>(null);
   const halo = useRef<THREE.PointLight>(null);
   const [hover, setHover] = useState(false);
   const uniforms = useMemo(() => ({ uOpen: { value: 0 }, uTime: { value: 0 } }), []);
@@ -134,7 +135,7 @@ export default function AnywhereDoor({
     uniforms.uTime.value = clock.getElapsedTime();
     if (panelMat.current) {
       const pulse = 0.5 + 0.5 * Math.sin(clock.getElapsedTime() * 2.2);
-      panelMat.current.emissiveIntensity = hover ? 0.35 : 0.03 + pulse * 0.03;
+      panelMat.current.emissiveIntensity = hover ? 0.3 : 0.0 + pulse * 0.0;
     }
     if (halo.current) halo.current.intensity = p.open * 60;
   });
@@ -169,20 +170,20 @@ export default function AnywhereDoor({
 
         {/* frame: dark wood posts, a lintel with a small cornice, a stone threshold */}
         {[-1, 1].map((s) => (
-          <mesh key={s} position={[s * (W / 2 + 0.06), 0, 0]}>
+          <mesh key={s} position={[s * (W / 2 + 0.06), 0, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.12, H + 0.1, 0.24]} />
-            <meshStandardMaterial color={FRAME} roughness={0.75} metalness={0.05} bumpMap={paint} bumpScale={1.5} />
+            <meshStandardMaterial color={FRAME} roughness={0.78} metalness={0.05} />
           </mesh>
         ))}
-        <mesh position={[0, H / 2 + 0.06, 0]}>
+        <mesh position={[0, H / 2 + 0.06, 0]} castShadow receiveShadow>
           <boxGeometry args={[W + 0.24, 0.12, 0.24]} />
-          <meshStandardMaterial color={FRAME} roughness={0.75} metalness={0.05} bumpMap={paint} bumpScale={1.5} />
+          <meshStandardMaterial color={FRAME} roughness={0.78} metalness={0.05} />
         </mesh>
-        <mesh position={[0, H / 2 + 0.16, 0.02]}>
+        <mesh position={[0, H / 2 + 0.16, 0.02]} castShadow receiveShadow>
           <boxGeometry args={[W + 0.5, 0.08, 0.34]} />
           <meshStandardMaterial color="#1f1a17" roughness={0.8} />
         </mesh>
-        <mesh position={[0, -H / 2 - 0.03, 0.04]}>
+        <mesh position={[0, -H / 2 - 0.03, 0.04]} castShadow receiveShadow>
           <boxGeometry args={[W + 0.3, 0.06, 0.36]} />
           <meshStandardMaterial color="#77716a" roughness={0.9} />
         </mesh>
@@ -190,28 +191,45 @@ export default function AnywhereDoor({
         {/* hinge on the left edge: rotating this group swings the door */}
         <group ref={hinge} position={[-W / 2, 0, 0]}>
           <group position={[W / 2, 0, 0]}>
-            <mesh onPointerOver={over} onPointerOut={out} onClick={click}>
+            <mesh onPointerOver={over} onPointerOut={out} onClick={click} castShadow receiveShadow>
               <boxGeometry args={[W, H, T]} />
-              <meshStandardMaterial
+              <meshPhysicalMaterial
                 ref={panelMat}
                 color={PINK}
-                roughness={0.5}
-                metalness={0.1}
+                roughness={0.42}
+                metalness={0}
+                clearcoat={0.55}
+                clearcoatRoughness={0.3}
                 bumpMap={paint}
-                bumpScale={1.2}
+                bumpScale={0.6}
                 emissive={PINK}
-                emissiveIntensity={0.03}
+                emissiveIntensity={0}
               />
             </mesh>
-            {/* two recessed panels, as on a classic painted door */}
-            {[0.2, -0.2].map((k) => (
-              <mesh key={k} position={[0, H * k, T / 2 + 0.004]}>
-                <boxGeometry args={[W * 0.7, H * 0.34, 0.012]} />
-                <meshStandardMaterial color={PINK_DEEP} roughness={0.5} metalness={0.1} />
-              </mesh>
+            {/* two panels with raised mouldings: the thin raised borders catch
+                light on one edge and cast shadow on the other, which is what
+                makes a flat slab read as a crafted door */}
+            {[H * 0.19, -H * 0.19].map((y) => (
+              <group key={y} position={[0, y, T / 2]}>
+                <mesh position={[0, 0, 0.003]} receiveShadow>
+                  <boxGeometry args={[W * 0.66, H * 0.29, 0.008]} />
+                  <meshPhysicalMaterial color={PINK_DEEP} roughness={0.5} clearcoat={0.3} clearcoatRoughness={0.4} />
+                </mesh>
+                {[
+                  [0, H * 0.145, W * 0.66 + 0.05, 0.04],
+                  [0, -H * 0.145, W * 0.66 + 0.05, 0.04],
+                  [W * 0.33, 0, 0.04, H * 0.29],
+                  [-W * 0.33, 0, 0.04, H * 0.29],
+                ].map(([mx, my, mw, mh], i) => (
+                  <mesh key={i} position={[mx, my, 0.014]} castShadow receiveShadow>
+                    <boxGeometry args={[mw, mh, 0.03]} />
+                    <meshPhysicalMaterial color={PINK_LIGHT} roughness={0.4} clearcoat={0.5} clearcoatRoughness={0.3} />
+                  </mesh>
+                ))}
+              </group>
             ))}
             {/* brass nameplate */}
-            <mesh position={[0, H * 0.4 + 0.02, T / 2 + 0.012]}>
+            <mesh position={[0, H * 0.44, T / 2 + 0.012]}>
               <planeGeometry args={[0.46, 0.2]} />
               <meshStandardMaterial map={plate} metalness={0.85} roughness={0.35} />
             </mesh>

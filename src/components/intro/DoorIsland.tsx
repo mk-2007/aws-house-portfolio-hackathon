@@ -20,9 +20,9 @@ function makeIslandGeometry() {
   const pos = g.attributes.position;
   const colors: number[] = [];
   const v = new THREE.Vector3();
-  const stone = new THREE.Color("#4b4540");
-  const moss = new THREE.Color("#4d5a3a");
-  const dark = new THREE.Color("#2a2623");
+  const stone = new THREE.Color("#5a534b");
+  const moss = new THREE.Color("#4f6340");
+  const dark = new THREE.Color("#2b2724");
   for (let i = 0; i < pos.count; i++) {
     v.fromBufferAttribute(pos, i).normalize();
     const lump =
@@ -40,7 +40,11 @@ function makeIslandGeometry() {
     const out = new THREE.Vector3(v.x * r, y, v.z * r);
     pos.setXYZ(i, out.x, out.y, out.z);
     // moss on top, stone in the middle, dark rock below
-    const c = y > 0.1 ? moss.clone().lerp(stone, hash(i) * 0.5) : y > -0.3 ? stone.clone() : dark.clone();
+    // blend smoothly between layers (moss -> stone -> dark rock) so there are
+    // no hard colour bands across the faces
+    const mossW = Math.min(1, Math.max(0, (y - 0.02) / 0.14));
+    const darkW = Math.min(1, Math.max(0, (-y - 0.15) / 0.45));
+    const c = stone.clone().lerp(moss, mossW * (0.75 + hash(i) * 0.25)).lerp(dark, darkW);
     colors.push(c.r, c.g, c.b);
   }
   g.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
@@ -55,12 +59,12 @@ export default function DoorIsland({ top }: { top: number }) {
   const y = top - 0.18 * sy;
   return (
     <group>
-      <mesh geometry={geo} position={[0.2, y, 0.1]} scale={[2.9, sy, 2.2]}>
+      <mesh geometry={geo} position={[0.2, y, 0.1]} scale={[2.9, sy, 2.2]} castShadow receiveShadow>
         <meshStandardMaterial vertexColors roughness={0.96} metalness={0.04} />
       </mesh>
 
       {/* the stone step in front of the door */}
-      <mesh position={[0, top + 0.05, 0.55]}>
+      <mesh position={[0, top + 0.05, 0.55]} castShadow receiveShadow>
         <boxGeometry args={[2.1, 0.1, 0.62]} />
         <meshStandardMaterial color="#6b655d" roughness={0.9} />
       </mesh>
@@ -72,7 +76,7 @@ export default function DoorIsland({ top }: { top: number }) {
         [-2.2, 0.05, -0.4, 0.28],
         [2.4, 0.09, -0.5, 0.2],
       ].map(([x, h, z, s], i) => (
-        <mesh key={i} position={[x, top + h, z]} scale={s} rotation={[i, i * 1.7, 0]}>
+        <mesh key={i} position={[x, top + h, z]} scale={s} rotation={[i, i * 1.7, 0]} castShadow receiveShadow>
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial color={i % 2 ? "#5e5852" : "#4d5a3a"} roughness={1} />
         </mesh>
