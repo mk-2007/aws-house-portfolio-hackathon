@@ -2,14 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Stars, Sparkles } from "@react-three/drei";
+import { Stars, Sparkles, PerformanceMonitor } from "@react-three/drei";
 import {
   EffectComposer,
   Bloom,
   Vignette,
-  Noise,
-  DepthOfField,
-  ChromaticAberration,
   ToneMapping,
   HueSaturation,
   BrightnessContrast,
@@ -160,19 +157,21 @@ export default function SpaceDoorScene({
   );
   const keyDir = useMemo(() => new THREE.Vector3(...SUN_POS).normalize(), []);
   const flyby = useMemo(() => flybyRocks(), []);
-  // Depth of field and chromatic fringing are the costly lens effects: keep
-  // them for larger screens and leave phones with the cheaper bloom + grain.
+  // Adaptive quality. Start high on big screens, low on phones, and let
+  // PerformanceMonitor step down automatically if the frame rate drops. This
+  // is how games stay smooth on weak hardware without a settings menu.
   const [fancy, setFancy] = useState(false);
   useEffect(() => setFancy(window.innerWidth >= 900), []);
 
   return (
     <Canvas
       shadows
-      dpr={[1, 1.5]}
+      dpr={fancy ? [1, 1.5] : 1}
       camera={{ position: [-17, 8.5, 37], fov: 54, near: 0.1, far: 1200 }}
       gl={{ antialias: false, powerPreference: "high-performance" }}
       style={{ position: "absolute", inset: 0 }}
     >
+      <PerformanceMonitor flipflops={2} onDecline={() => setFancy(false)} />
       <color attach="background" args={["#02030a"]} />
       <Sky />
       <Stars radius={300} depth={80} count={5000} factor={6} saturation={0.5} fade speed={0.4} />
@@ -186,7 +185,7 @@ export default function SpaceDoorScene({
         position={[-4.5, 6, 8]}
         intensity={2.0}
         color="#ffe3c2"
-        shadow-mapSize={fancy ? [2048, 2048] : [1024, 1024]}
+        shadow-mapSize={[1024, 1024]}
         shadow-camera-left={-5}
         shadow-camera-right={5}
         shadow-camera-top={5}
@@ -216,21 +215,15 @@ export default function SpaceDoorScene({
       <CameraRig progress={progress} />
 
       <EffectComposer multisampling={fancy ? 4 : 0}>
-        <Bloom intensity={0.9} luminanceThreshold={0.72} luminanceSmoothing={0.25} mipmapBlur />
-        {fancy ? (
-          <DepthOfField target={[0, 0, 0]} focalLength={0.06} bokehScale={3.2} height={520} />
-        ) : (
-          <></>
-        )}
-        {fancy ? <ChromaticAberration offset={new THREE.Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} /> : <></>}
-        {/* the film look: a tone curve (so highlights roll off instead of
-            clipping), a slight desaturation and contrast lift, then grain */}
+        <Bloom intensity={0.75} luminanceThreshold={0.8} luminanceSmoothing={0.2} mipmapBlur />
+        {/* the film look: a tone curve so highlights roll off instead of clipping,
+            a slight desaturation and a contrast lift. No grain or lens blur:
+            they cost sharpness, and the door must stay crisp. */}
         <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
         <HueSaturation saturation={-0.08} />
         <BrightnessContrast brightness={-0.02} contrast={0.12} />
         {fancy ? <></> : <SMAA />}
-        <Noise opacity={0.04} />
-        <Vignette eskil={false} offset={0.2} darkness={0.85} />
+        <Vignette eskil={false} offset={0.2} darkness={0.8} />
       </EffectComposer>
     </Canvas>
   );
