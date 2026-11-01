@@ -4,6 +4,7 @@ import { useLayoutEffect, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { NOISE_GLSL } from "./noiseGlsl";
+import { bakeEquirect } from "./bakeEquirect";
 
 /**
  * Bakes a deep-space nebula into a texture ONCE on the GPU.
@@ -18,14 +19,6 @@ import { NOISE_GLSL } from "./noiseGlsl";
  * The picture is computed from a 3D direction (not a flat 2D coordinate), so
  * it wraps around the sky sphere with no visible seam.
  */
-const vertex = /* glsl */ `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = vec4(position.xy, 0.0, 1.0);
-  }
-`;
-
 const fragment = /* glsl */ `
   varying vec2 vUv;
   ${NOISE_GLSL}
@@ -52,10 +45,15 @@ const fragment = /* glsl */ `
     density *= mix(1.0, smoothstep(0.32, 0.68, dust), 0.85);
 
     float t = fbm(d * 1.5 + q);
-    vec3 deepBlue = vec3(0.05, 0.12, 0.42);
-    vec3 magenta  = vec3(0.62, 0.12, 0.52);
-    vec3 hotCore  = vec3(1.00, 0.58, 0.28);
-    vec3 col = mix(deepBlue, magenta, smoothstep(0.25, 0.7, t));
+    // Colour grading by palette: cool teal and indigo for most of the gas,
+    // a touch of violet, and amber only in the hottest cores. Teal against
+    // amber is the classic cinematic "teal and orange" contrast.
+    vec3 deepTeal = vec3(0.02, 0.13, 0.27);
+    vec3 indigo   = vec3(0.16, 0.14, 0.52);
+    vec3 teal     = vec3(0.04, 0.46, 0.56);
+    vec3 hotCore  = vec3(1.00, 0.62, 0.24);
+    vec3 col = mix(deepTeal, indigo, smoothstep(0.25, 0.75, t));
+    col = mix(col, teal, smoothstep(0.52, 0.82, fbm(d * 3.1 + q)) * 0.55);
     col = mix(col, hotCore, smoothstep(0.5, 0.95, n * band * 1.9));
     col *= density * 1.55;
 
@@ -80,22 +78,7 @@ export function useNebulaTexture(width = 2048): Nebula | null {
   const [nebula, setNebula] = useState<Nebula | null>(null);
 
   useLayoutEffect(() => {
-    const height = width / 2;
-    const rt = new THREE.WebGLRenderTarget(width, height, {
-      type: THREE.UnsignedByteType,
-      colorSpace: THREE.SRGBColorSpace,
-      depthBuffer: false,
-    });
-    const mat = new THREE.ShaderMaterial({ vertexShader: vertex, fragmentShader: fragment });
-    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
-    const scene = new THREE.Scene();
-    scene.add(quad);
-    const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-    const prev = gl.getRenderTarget();
-    gl.setRenderTarget(rt);
-    gl.render(scene, cam);
-    gl.setRenderTarget(prev);
+    const rt = bakeEquirect(gl, fragment, width);
 
     rt.texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -112,8 +95,6 @@ export function useNebulaTexture(width = 2048): Nebula | null {
 
     return () => {
       rt.dispose();
-      mat.dispose();
-      quad.geometry.dispose();
       pmrem?.dispose();
       env?.dispose();
     };

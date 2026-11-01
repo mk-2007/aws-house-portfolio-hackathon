@@ -60,8 +60,8 @@ export default function Sun({ position }: { position: [number, number, number] }
       <sprite scale={[36, 36, 1]}>
         <spriteMaterial map={core} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} fog={false} />
       </sprite>
-      <sprite scale={[420, 14, 1]}>
-        <spriteMaterial map={streak} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} opacity={0.8} fog={false} />
+      <sprite scale={[170, 5, 1]}>
+        <spriteMaterial map={streak} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} opacity={0.55} fog={false} />
       </sprite>
     </group>
   );
