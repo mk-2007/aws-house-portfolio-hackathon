@@ -4,6 +4,7 @@ import { useLayoutEffect, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { NOISE_GLSL } from "./noiseGlsl";
+import { bakeEquirect } from "./bakeEquirect";
 
 /**
  * Bakes a deep-space nebula into a texture ONCE on the GPU.
@@ -18,14 +19,6 @@ import { NOISE_GLSL } from "./noiseGlsl";
  * The picture is computed from a 3D direction (not a flat 2D coordinate), so
  * it wraps around the sky sphere with no visible seam.
  */
-const vertex = /* glsl */ `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = vec4(position.xy, 0.0, 1.0);
-  }
-`;
-
 const fragment = /* glsl */ `
   varying vec2 vUv;
   ${NOISE_GLSL}
@@ -85,22 +78,7 @@ export function useNebulaTexture(width = 2048): Nebula | null {
   const [nebula, setNebula] = useState<Nebula | null>(null);
 
   useLayoutEffect(() => {
-    const height = width / 2;
-    const rt = new THREE.WebGLRenderTarget(width, height, {
-      type: THREE.UnsignedByteType,
-      colorSpace: THREE.SRGBColorSpace,
-      depthBuffer: false,
-    });
-    const mat = new THREE.ShaderMaterial({ vertexShader: vertex, fragmentShader: fragment });
-    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
-    const scene = new THREE.Scene();
-    scene.add(quad);
-    const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-    const prev = gl.getRenderTarget();
-    gl.setRenderTarget(rt);
-    gl.render(scene, cam);
-    gl.setRenderTarget(prev);
+    const rt = bakeEquirect(gl, fragment, width);
 
     rt.texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -117,8 +95,6 @@ export function useNebulaTexture(width = 2048): Nebula | null {
 
     return () => {
       rt.dispose();
-      mat.dispose();
-      quad.geometry.dispose();
       pmrem?.dispose();
       env?.dispose();
     };
