@@ -30,63 +30,35 @@ export interface DoorProgress {
 const W = 1.5; // door width
 const H = 2.8; // door height
 const T = 0.1; // door thickness
-const PINK = "#b9567f"; // a muted painted rose: the one warm accent in a cool scene
-const PINK_DEEP = "#98406a";
-const PINK_LIGHT = "#cf7396";
+const PINK = "#9a4f6d"; // deep, muted rose: reads as painted wood, not neon // a muted painted rose: the one warm accent in a cool scene
+const PINK_DEEP = "#7e3e58";
+const PINK_LIGHT = "#b5708c";
 const FRAME = "#2b2420"; // dark wood, so it reads as a doorway and not a wall slab
 const GOLD = "#e7b64b";
-
-/** Painted-wood surface: faint vertical grain plus speckle, used as a bump map. */
-function makePaintTexture() {
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 512;
-  const g = c.getContext("2d")!;
-  g.fillStyle = "#808080";
-  g.fillRect(0, 0, 256, 512);
-  for (let i = 0; i < 260; i++) {
-    const x = Math.random() * 256;
-    const light = Math.random() > 0.5;
-    g.strokeStyle = light
-      ? `rgba(255,255,255,${0.03 + Math.random() * 0.06})`
-      : `rgba(0,0,0,${0.04 + Math.random() * 0.07})`;
-    g.lineWidth = 0.6 + Math.random() * 1.6;
-    g.beginPath();
-    g.moveTo(x, 0);
-    g.bezierCurveTo(x + 6, 150, x - 6, 350, x + 2, 512);
-    g.stroke();
-  }
-  for (let i = 0; i < 2200; i++) {
-    g.fillStyle = Math.random() > 0.5 ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
-    g.fillRect(Math.random() * 256, Math.random() * 512, 1.4, 1.4);
-  }
-  const t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  return t;
-}
 
 /** A small brass nameplate engraved with initials. */
 function makePlateTexture() {
   const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 110;
+  c.width = 512;
+  c.height = 220;
   const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 256, 110);
+  const grad = g.createLinearGradient(0, 0, 512, 220);
   grad.addColorStop(0, "#b88a2e");
   grad.addColorStop(0.5, "#f1cf78");
   grad.addColorStop(1, "#a9791f");
   g.fillStyle = grad;
-  g.fillRect(0, 0, 256, 110);
+  g.fillRect(0, 0, 512, 220);
   g.strokeStyle = "rgba(60,38,6,0.7)";
-  g.lineWidth = 5;
-  g.strokeRect(6, 6, 244, 98);
+  g.lineWidth = 10;
+  g.strokeRect(12, 12, 488, 196);
   g.fillStyle = "#3a2504";
-  g.font = "bold 54px Georgia, serif";
+  g.font = "bold 108px Georgia, serif";
   g.textAlign = "center";
   g.textBaseline = "middle";
-  g.fillText("M . K", 128, 58);
+  g.fillText("M . K", 256, 116);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
   return t;
 }
 
@@ -124,7 +96,6 @@ export default function AnywhereDoor({
   const halo = useRef<THREE.PointLight>(null);
   const [hover, setHover] = useState(false);
   const uniforms = useMemo(() => ({ uOpen: { value: 0 }, uTime: { value: 0 } }), []);
-  const paint = useMemo(() => makePaintTexture(), []);
   const plate = useMemo(() => makePlateTexture(), []);
 
   useFrame(({ clock }) => {
@@ -200,8 +171,6 @@ export default function AnywhereDoor({
                 metalness={0}
                 clearcoat={0.55}
                 clearcoatRoughness={0.3}
-                bumpMap={paint}
-                bumpScale={0.6}
                 emissive={PINK}
                 emissiveIntensity={0}
               />
