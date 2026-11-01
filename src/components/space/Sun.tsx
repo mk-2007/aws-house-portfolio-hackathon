@@ -43,7 +43,7 @@ function streakTexture() {
   return t;
 }
 
-export default function Sun({ position }: { position: [number, number, number] }) {
+export default function Sun({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
   const { core, halo, streak } = useMemo(
     () => ({
       core: radialTexture("rgba(255,255,245,1)", "rgba(255,226,170,0.55)"),
@@ -53,7 +53,7 @@ export default function Sun({ position }: { position: [number, number, number] }
     []
   );
   return (
-    <group position={position}>
+    <group position={position} scale={scale}>
       <sprite scale={[95, 95, 1]}>
         <spriteMaterial map={halo} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} fog={false} />
       </sprite>
