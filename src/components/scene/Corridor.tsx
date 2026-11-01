@@ -20,7 +20,8 @@ import { usePlayerStore } from "@/store/playerStore";
 import { useSpaceStore } from "@/store/spaceStore";
 import { useKeysStore, countKeys } from "@/store/keysStore";
 import { ATTIC_DOOR_X, ATTIC_DOOR_STAND } from "./rooms/atticLayout";
-import { useNewspaperTexture } from "./textures/useNewspaperTexture";
+import { CorridorWalls, FloorInlay, ArrivalDoor } from "./CorridorShell";
+import { SUN_POSITION } from "@/components/space/SpaceWorld";
 import { createLabelTexture } from "./textures/createLabelTexture";
 import Portrait from "./props/Portrait";
 import WallClock from "./props/WallClock";
@@ -28,7 +29,6 @@ import FloorLamp from "./props/FloorLamp";
 import {
   ConsoleTable,
   HouseItineraryPlaque,
-  CorridorRunnerRug,
   WallSconce,
   EntrywayBench,
   CeilingBeams,
@@ -38,8 +38,8 @@ const CORRIDOR_LENGTH = CORRIDOR_END_Z - CORRIDOR_START_Z;
 const CORRIDOR_CENTER_Z = (CORRIDOR_START_Z + CORRIDOR_END_Z) / 2;
 
 // Warm luxury residential tones
-const FLOOR_COLOR = "#181410"; // Rich dark hardwood floor
-const CEILING_COLOR = "#1f1b16";
+const FLOOR_COLOR = "#2a1f17"; // dark polished hardwood
+const CEILING_COLOR = "#0e121c";
 const WOOD_DARK = "#2e1e12";
 const BRASS = "#c9a34a";
 
@@ -63,7 +63,7 @@ function Floor() {
       receiveShadow
     >
       <planeGeometry args={[CORRIDOR_WIDTH, CORRIDOR_LENGTH]} />
-      <meshStandardMaterial color={FLOOR_COLOR} roughness={0.8} metalness={0.1} />
+      <meshStandardMaterial color={FLOOR_COLOR} roughness={0.4} metalness={0.12} />
     </mesh>
   );
 }
@@ -80,60 +80,11 @@ function Ceiling() {
   );
 }
 
-function EndWall({
-  z,
-  rotY,
-  texture,
-}: {
-  z: number;
-  rotY: number;
-  texture: THREE.CanvasTexture | null;
-}) {
-  return (
-    <mesh position={[0, WALL_HEIGHT / 2, z]} rotation={[0, rotY, 0]} receiveShadow>
-      <planeGeometry args={[CORRIDOR_WIDTH, WALL_HEIGHT]} />
-      <meshStandardMaterial
-        map={texture ?? undefined}
-        color={texture ? "#ffffff" : "#ede8de"}
-        side={THREE.DoubleSide}
-        roughness={0.85}
-      />
-    </mesh>
-  );
-}
-
-function Wall({
-  side,
-  texture,
-}: {
-  side: "left" | "right";
-  texture: THREE.CanvasTexture | null;
-}) {
-  const x = side === "left" ? -WALL_X : WALL_X;
-  const rotY = side === "left" ? Math.PI / 2 : -Math.PI / 2;
-
-  return (
-    <mesh
-      position={[x, WALL_HEIGHT / 2, CORRIDOR_CENTER_Z]}
-      rotation={[0, rotY, 0]}
-      receiveShadow
-    >
-      <planeGeometry args={[CORRIDOR_LENGTH, WALL_HEIGHT]} />
-      <meshStandardMaterial
-        map={texture ?? undefined}
-        color={texture ? "#ffffff" : "#ede8de"}
-        side={THREE.DoubleSide}
-        roughness={0.85}
-      />
-    </mesh>
-  );
-}
-
 /** Door sign attached rigidly to the door group */
 function DoorSign({ label }: { label: string }) {
   const [texture] = useState<THREE.CanvasTexture | null>(() =>
     typeof document !== "undefined"
-      ? createLabelTexture(label, { width: 512, height: 168, fontPx: 58, bg: "#f5f0e6", fg: "#1a1714", border: "#7a2620" })
+      ? createLabelTexture(label, { width: 512, height: 168, fontPx: 58, bg: "#141a2b", fg: "#f1e2bd", border: "#c9a34a" })
       : null
   );
   useEffect(() => () => texture?.dispose(), [texture]);
@@ -220,7 +171,7 @@ function Door({
         castShadow
       >
         <boxGeometry args={[DOOR_WIDTH, DOOR_HEIGHT, 0.08]} />
-        <meshStandardMaterial color="#422f20" roughness={0.6} />
+        <meshPhysicalMaterial color="#9a4f6d" roughness={0.45} clearcoat={0.5} clearcoatRoughness={0.3} />
       </mesh>
 
       {/* Recessed Door Inset Panels */}
@@ -228,11 +179,11 @@ function Door({
         <group key={px} position={[px, 0, 0.065]}>
           <mesh position={[0, 0.7, 0]}>
             <planeGeometry args={[0.5, 0.8]} />
-            <meshStandardMaterial color="#2d1f14" roughness={0.8} />
+            <meshStandardMaterial color="#7e3e58" roughness={0.55} />
           </mesh>
           <mesh position={[0, 1.8, 0]}>
             <planeGeometry args={[0.5, 0.9]} />
-            <meshStandardMaterial color="#2d1f14" roughness={0.8} />
+            <meshStandardMaterial color="#7e3e58" roughness={0.55} />
           </mesh>
         </group>
       ))}
@@ -334,47 +285,50 @@ function AtticDoor() {
 const BEAM_POSITIONS = [-12, -7, -2, 3, 8, 11];
 
 export default function Corridor() {
-  const wallTexture = useNewspaperTexture();
-
   return (
     <group>
-      {/* Bright, Warm, Inviting Residential Gallery Lighting */}
-      <ambientLight intensity={1.15} color="#fff6ea" />
-      <hemisphereLight args={["#fff8ed", "#4a3525", 0.75]} />
+      {/* Lighting: a cool, dim starlight fill, one hard shadow-casting "sun" that
+          streams through the windows from the same direction as the sun the
+          visitor sees outside, and warm lamplight inside. Contrast between
+          cool outside light and warm inside light is what makes it feel real. */}
+      <ambientLight intensity={0.75} color="#b3bddc" />
+      <hemisphereLight args={["#a3b3e3", "#3a2a1c", 1.0]} />
       <directionalLight
-        position={[5, 10, -5]}
-        intensity={0.9}
-        color="#fff4e0"
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        position={[SUN_POSITION[0] * 0.25, SUN_POSITION[1] * 0.25, SUN_POSITION[2] * 0.25]}
+        intensity={5.0}
+        color="#ffd9a8"
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-18}
+        shadow-camera-right={18}
+        shadow-camera-top={12}
+        shadow-camera-bottom={-12}
+        shadow-camera-near={1}
+        shadow-camera-far={90}
+        shadow-bias={-0.0004}
+        shadow-normalBias={0.04}
       />
-      <directionalLight position={[-5, 10, 5]} intensity={0.6} color="#ffe8cc" />
+      <directionalLight position={[-30, 8, -6]} intensity={0.9} color="#7f9bff" />
 
       {/* Ceiling Downlights along the hallway */}
       {[-10, -5, 0, 5, 9].map((z) => (
         <pointLight
           key={`downlight-${z}`}
           position={[0, 3.6, z]}
-          color="#ffe2be"
-          intensity={1.8}
-          distance={8}
+          color="#ffcf94"
+          intensity={2.8}
+          distance={9}
           decay={1.8}
         />
       ))}
 
       {/* Architecture Base */}
       <Floor />
+      <FloorInlay />
       <Ceiling />
-      <Wall side="left" texture={wallTexture} />
-      <Wall side="right" texture={wallTexture} />
-
-      {/* End Walls with Clock */}
-      <EndWall z={CORRIDOR_START_Z} rotY={0} texture={wallTexture} />
-      <EndWall z={CORRIDOR_END_Z} rotY={Math.PI} texture={wallTexture} />
+      <CorridorWalls />
+      <ArrivalDoor />
       <WallClock position={[0, 2.7, CORRIDOR_END_Z - 0.05]} rotationY={Math.PI} />
-
-      {/* Central Plush Luxury Runner Rug */}
-      <CorridorRunnerRug length={CORRIDOR_LENGTH - 2} />
 
       {/* Ceiling Cross Beams */}
       <CeilingBeams positions={BEAM_POSITIONS} width={CORRIDOR_WIDTH} />
@@ -384,7 +338,7 @@ export default function Corridor() {
 
       {/* House directory on the entrance end wall, opposite the clock wall. */}
       <HouseItineraryPlaque
-        position={[0, 2.3, CORRIDOR_START_Z + 0.04]}
+        position={[1.5, 2.3, CORRIDOR_START_Z + 0.04]}
       />
 
       {/* Modern Wall Sconces flanking doorways */}
@@ -399,7 +353,7 @@ export default function Corridor() {
       {/* Standing Floor Lamps placed safely in wall alcoves (clear of doors & paths) */}
       <FloorLamp x={WALL_X - 0.45} z={-11} />
       <FloorLamp x={-WALL_X + 0.45} z={1} />
-      <FloorLamp x={-WALL_X + 0.45} z={10.8} />
+      <FloorLamp x={-WALL_X + 0.45} z={11.55} />
 
       {/* Modern Entryway Seating Bench */}
       <EntrywayBench position={[WALL_X - 0.55, 0, 7]} rotationY={-Math.PI / 2} />
