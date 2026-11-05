@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import * as THREE from "three";
 import type { ThreeEvent } from "@react-three/fiber";
 import {
@@ -17,6 +18,7 @@ import FramedWallPortrait from "@/components/scene/props/FramedWallPortrait";
 import { WallSconce } from "@/components/scene/props/CorridorDecor";
 import { ATTIC } from "@/content/atticContent";
 import { LINKS } from "@/content/siteContent";
+import { useAtticRewardStore } from "@/store/atticRewardStore";
 
 const FLOOR = "#2a1d12";
 const WOOD_DARK = "#2e1e12";
@@ -97,16 +99,45 @@ function GableWindow() {
 }
 
 function Trunk({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  const [open, setOpen] = useState(false);
+  const reveal = useAtticRewardStore((s) => s.reveal);
+
+  function openTrunk(event: ThreeEvent<MouseEvent>) {
+    event.stopPropagation();
+    setOpen(true);
+    reveal();
+  }
+
   return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      <mesh position={[0, 0.3, 0]} castShadow>
+    <group
+      position={position}
+      rotation={[0, rotationY, 0]}
+      onClick={openTrunk}
+      onPointerOver={() => (document.body.style.cursor = "pointer")}
+      onPointerOut={() => (document.body.style.cursor = "auto")}
+    >
+      <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.0, 0.6, 0.55]} />
         <meshStandardMaterial color="#3a2616" roughness={0.8} />
       </mesh>
-      <mesh position={[0, 0.62, 0]} castShadow>
-        <boxGeometry args={[1.04, 0.08, 0.59]} />
-        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.4} />
-      </mesh>
+      <group position={[0, 0.62, 0.27]} rotation={[open ? 1.1 : 0, 0, 0]}>
+        <mesh position={[0, 0, -0.27]} castShadow>
+          <boxGeometry args={[1.04, 0.08, 0.59]} />
+          <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.4} />
+        </mesh>
+      </group>
+      {open && (
+        <mesh position={[0, 0.53, -0.02]}>
+          <icosahedronGeometry args={[0.14, 1]} />
+          <meshStandardMaterial
+            color="#ffe7a0"
+            emissive="#d79b31"
+            emissiveIntensity={1.4}
+            metalness={0.5}
+            roughness={0.25}
+          />
+        </mesh>
+      )}
     </group>
   );
 }

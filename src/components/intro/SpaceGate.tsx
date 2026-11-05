@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useAppStore } from "@/store/appStore";
+import { useHuntRunStore } from "@/store/huntRunStore";
 import SpaceDoorScene from "./SpaceDoorScene";
 import type { DoorProgress } from "./AnywhereDoor";
 
@@ -22,6 +23,7 @@ import type { DoorProgress } from "./AnywhereDoor";
  */
 export default function SpaceGate() {
   const enterCorridor = useAppStore((s) => s.enterCorridor);
+  const startRun = useHuntRunStore((s) => s.start);
   const progress = useRef<DoorProgress>({ intro: 0, knob: 0, open: 0, fly: 0 });
   const titleRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -30,6 +32,11 @@ export default function SpaceGate() {
   const [entering, setEntering] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [ctaVisible, setCtaVisible] = useState(false);
+
+  function beginExploration() {
+    startRun();
+    enterCorridor();
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -65,7 +72,7 @@ export default function SpaceGate() {
     if (entering) return;
     setEntering(true);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const tl = gsap.timeline({ onComplete: enterCorridor });
+    const tl = gsap.timeline({ onComplete: beginExploration });
 
     tl.to([titleRef.current, ctaRef.current], { opacity: 0, y: 16, duration: 0.5, ease: "power2.in" });
     if (reduce) {
@@ -137,7 +144,7 @@ export default function SpaceGate() {
 
       {/* skip is available from the very first frame */}
       <button
-        onClick={enterCorridor}
+        onClick={beginExploration}
         disabled={entering}
         className="absolute bottom-3 right-4 text-[#9fb4d9]/70 text-xs tracking-widest uppercase underline underline-offset-4 hover:text-white"
       >

@@ -1,11 +1,12 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePlayerStore } from "@/store/playerStore";
 import { useLookStore, ARC_RANGE } from "@/store/lookStore";
 import { useKeyboardMoveStore } from "@/store/keyboardMoveStore";
+import { useCameraModeStore } from "@/store/cameraModeStore";
 import { useSpaceStore, type Space, type EntryId } from "@/store/spaceStore";
 import { SPAWN_POSITION, PLAYER_BOUNDS, EYE_HEIGHT, getCorridorDoorStand } from "./corridorLayout";
 import { HOME_SPAWN } from "./rooms/homeLayout";
@@ -20,6 +21,8 @@ const ARRIVE_THRESHOLD = 0.05;
 const TURN_SPEED = 6; // camera turn rate, shared by walking-auto-face and room look
 const KEY_MOVE_SPEED = 3.5; // units/sec, WASD/arrow-key corridor walking
 const KEY_TURN_SPEED = 2.2; // rad/sec, WASD/arrow-key turning (corridor and room look alike)
+const THIRD_PERSON_DISTANCE = 2.5;
+const MOUSE_LOOK_SENSITIVITY = 0.006;
 
 const DEFAULT_SPAWN_FOR: Record<Space, { x: number; z: number; yaw: number }> = {
   corridor: { x: SPAWN_POSITION[0], z: SPAWN_POSITION[2], yaw: Math.PI },
@@ -73,14 +76,53 @@ const ENTRY_SPAWN_FOR: Partial<Record<EntryId, { x: number; z: number; yaw: numb
  * unrelated re-render happened to refresh a stale closure.
  */
 export default function Player() {
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
+  const cameraMode = useCameraModeStore((s) => s.mode);
 
   const posRef = useRef(new THREE.Vector3());
   const yawRef = useRef(0);
+  const avatarRef = useRef<THREE.Group>(null);
+  const walkPhaseRef = useRef(0);
   // The room's fixed facing direction — look control offsets FROM this,
   // it never drifts itself. Meaningless in the corridor.
   const roomBaseYawRef = useRef(0);
   const lastSpaceRef = useRef<Space | null>(null);
+
+  function syncCamera(space: Space, yaw: number, delta = 0, smooth = false) {
+    const pos = posRef.current;
+    if (useCameraModeStore.getState().mode === "third-person") {
+      let cameraX = pos.x + Math.sin(yaw) * THIRD_PERSON_DISTANCE;
+      let cameraZ = pos.z + Math.cos(yaw) * THIRD_PERSON_DISTANCE;
+      if (space === "corridor") {
+        cameraX = THREE.MathUtils.clamp(cameraX, PLAYER_BOUNDS.minX, PLAYER_BOUNDS.maxX);
+        cameraZ = THREE.MathUtils.clamp(cameraZ, PLAYER_BOUNDS.minZ, PLAYER_BOUNDS.maxZ);
+      }
+
+      camera.position.set(cameraX, EYE_HEIGHT + 0.55, cameraZ);
+      camera.lookAt(pos.x, 1.05, pos.z);
+
+      const walking =
+        !!usePlayerStore.getState().target ||
+        useKeyboardMoveStore.getState().move !== 0;
+      if (walking) walkPhaseRef.current += delta * 9;
+      else walkPhaseRef.current = 0;
+
+      if (avatarRef.current) {
+        avatarRef.current.position.set(
+          pos.x,
+          walking ? Math.abs(Math.sin(walkPhaseRef.current)) * 0.045 : 0,
+          pos.z
+        );
+        avatarRef.current.rotation.y = yaw;
+      }
+      return;
+    }
+
+    camera.position.set(pos.x, EYE_HEIGHT, pos.z);
+    const targetQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0));
+    if (smooth) camera.quaternion.slerp(targetQuat, Math.min(1, TURN_SPEED * delta));
+    else camera.quaternion.copy(targetQuat);
+  }
 
   function initForSpace(space: Space) {
     const spawn = useSpaceStore.getState().consumeSpawn() ?? DEFAULT_SPAWN_FOR[space];
@@ -88,8 +130,7 @@ export default function Player() {
     yawRef.current = spawn.yaw;
     roomBaseYawRef.current = spawn.yaw;
     useLookStore.getState().reset();
-    camera.position.copy(posRef.current);
-    camera.rotation.set(0, spawn.yaw, 0);
+    syncCamera(space, spawn.yaw);
 
     if (space === "corridor") {
       const chainTo = useSpaceStore.getState().chainTo;
@@ -111,6 +152,65 @@ export default function Player() {
     initForSpace(space);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera]);
+
+  useEffect(() => {
+    avatarRef.current?.traverse((object) => {
+      object.raycast = () => {};
+    });
+  }, [cameraMode]);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    let activePointerId: number | null = null;
+    let previousX = 0;
+
+    function onPointerDown(event: PointerEvent) {
+      if (event.button !== 2) return;
+      activePointerId = event.pointerId;
+      previousX = event.clientX;
+      event.preventDefault();
+    }
+
+    function onPointerMove(event: PointerEvent) {
+      if (event.pointerId !== activePointerId) return;
+      const deltaX = event.clientX - previousX;
+      previousX = event.clientX;
+      const space = useSpaceStore.getState().space;
+      if (space === "corridor") {
+        yawRef.current -= deltaX * MOUSE_LOOK_SENSITIVITY;
+      } else {
+        const current = useLookStore.getState().angle;
+        const next = THREE.MathUtils.clamp(
+          current + deltaX * MOUSE_LOOK_SENSITIVITY,
+          -ARC_RANGE,
+          ARC_RANGE
+        );
+        useLookStore.getState().setAngle(next);
+      }
+    }
+
+    function onPointerUp(event: PointerEvent) {
+      if (event.pointerId === activePointerId) activePointerId = null;
+    }
+
+    function onContextMenu(event: MouseEvent) {
+      event.preventDefault();
+    }
+
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("contextmenu", onContextMenu);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+
+    return () => {
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("contextmenu", onContextMenu);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [gl]);
 
   useFrame((_, delta) => {
     const currentSpace = useSpaceStore.getState().space;
@@ -135,12 +235,8 @@ export default function Player() {
         useLookStore.getState().setAngle(next);
       }
 
-      // Direct/instant application: dragging right / pressing D subtracts from base yaw,
-      // turning the camera to the right. Dragging left / pressing A adds to base yaw,
-      // turning the camera to the left.
       const targetYaw = roomBaseYawRef.current - useLookStore.getState().angle;
-      camera.rotation.set(0, targetYaw, 0);
-      camera.position.set(pos.x, EYE_HEIGHT, pos.z);
+      syncCamera(currentSpace, targetYaw, delta);
       return;
     }
 
@@ -165,9 +261,7 @@ export default function Player() {
         pos.z = THREE.MathUtils.clamp(pos.z + forwardZ * step, PLAYER_BOUNDS.minZ, PLAYER_BOUNDS.maxZ);
       }
 
-      camera.position.set(pos.x, EYE_HEIGHT, pos.z);
-      const targetQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yawRef.current, 0));
-      camera.quaternion.slerp(targetQuat, Math.min(1, TURN_SPEED * delta));
+      syncCamera(currentSpace, yawRef.current, delta, true);
       return;
     }
 
@@ -200,10 +294,56 @@ export default function Player() {
       }
     }
 
-    camera.position.set(pos.x, EYE_HEIGHT, pos.z);
-    const targetQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yawRef.current, 0));
-    camera.quaternion.slerp(targetQuat, Math.min(1, TURN_SPEED * delta));
+    syncCamera(currentSpace, yawRef.current, delta, true);
   });
 
-  return <Hand />;
+  return (
+    <>
+      {cameraMode === "third-person" && (
+        <group ref={avatarRef}>
+          <mesh position={[0, 0.91, 0]} castShadow receiveShadow>
+            <cylinderGeometry args={[0.24, 0.31, 0.62, 8]} />
+            <meshStandardMaterial color="#7a2620" roughness={0.78} />
+          </mesh>
+          <mesh position={[0, 1.34, 0]} castShadow>
+            <cylinderGeometry args={[0.075, 0.09, 0.18, 8]} />
+            <meshStandardMaterial color="#caa27a" roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 1.56, 0]} castShadow>
+            <sphereGeometry args={[0.19, 12, 10]} />
+            <meshStandardMaterial color="#caa27a" roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 1.68, 0.015]} castShadow>
+            <sphereGeometry args={[0.195, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color="#211a17" roughness={0.95} />
+          </mesh>
+          <mesh position={[0, 0.4, 0.015]} castShadow>
+            <boxGeometry args={[0.43, 0.33, 0.32]} />
+            <meshStandardMaterial color="#302a26" roughness={0.9} />
+          </mesh>
+          {[-1, 1].map((side) => (
+            <group key={side} position={[side * 0.14, 0, 0]}>
+              <mesh position={[0, 0.19, 0]} castShadow>
+                <cylinderGeometry args={[0.09, 0.105, 0.36, 7]} />
+                <meshStandardMaterial color="#302a26" roughness={0.9} />
+              </mesh>
+              <mesh position={[0, 0.07, -0.035]} castShadow>
+                <boxGeometry args={[0.16, 0.11, 0.26]} />
+                <meshStandardMaterial color="#191716" roughness={0.9} />
+              </mesh>
+            </group>
+          ))}
+          <mesh position={[0, 0.96, 0.25]} castShadow>
+            <boxGeometry args={[0.32, 0.38, 0.16]} />
+            <meshStandardMaterial color="#423020" roughness={0.9} />
+          </mesh>
+          <mesh position={[0, 1.02, 0.34]}>
+            <torusGeometry args={[0.055, 0.012, 6, 12]} />
+            <meshStandardMaterial color="#d3ad55" metalness={0.7} roughness={0.3} />
+          </mesh>
+        </group>
+      )}
+      {cameraMode === "first-person" && <Hand />}
+    </>
+  );
 }

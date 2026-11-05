@@ -25,6 +25,17 @@ your progress, and the welcome screen tells you the hunt exists. Collect all
 three to unlock the vault at the end of the corridor.
 
 The hunt never blocks navigation: the four main rooms are always open.
+After unlocking the attic, click either brass trunk to reveal a final
+keepsake about the projects still in progress.
+
+## Game controls
+
+- Click a room door or use the directory bar to navigate.
+- In the corridor, use **WASD** or the arrow keys to walk and turn.
+- Drag the room-look dial or use **A/D** inside a room; right-drag anywhere
+  in the 3D scene to look around.
+- Use the **First person / Third person** button to switch camera views.
+- In third-person view, the character follows your movement through the house.
 
 ## Tech stack
 
@@ -33,6 +44,15 @@ The hunt never blocks navigation: the four main rooms are always open.
   (procedural geometry and shaders; there are no heavy 3D model files)
 - **GSAP** — intro and camera transitions · **Zustand** — game state · **Tailwind CSS v4**
 - **AWS Amplify Hosting** — CI/CD from this repo, served through CloudFront
+- **Amazon API Gateway HTTP API + AWS Lambda + DynamoDB** — optional timed-hunt
+  leaderboard (`GET /scores`, `POST /scores`); the static site calls the API directly
+
+The attic leaderboard shows the ten fastest runs. Visitors choose whether to
+submit a display name (up to 20 characters) and their time; submitted names and
+times are public. The browser endpoint can be overridden at build time with
+`NEXT_PUBLIC_LEADERBOARD_API_URL`; the default points to this project's API.
+Because the API is public and the timer runs in the browser, scores are
+best-effort rather than cheat-proof.
 
 ### Why a static export?
 
