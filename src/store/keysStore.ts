@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useHuntRunStore } from "@/store/huntRunStore";
 
 /**
  * The Three Keys hunt. State lives in zustand so the 3D key props, the HUD
@@ -62,6 +63,7 @@ export const useKeysStore = create<KeysState>((set, get) => ({
     set({ collected });
     save(collected);
     const count = KEY_IDS.filter((k) => collected[k]).length;
+    if (count === 3) useHuntRunStore.getState().finish();
     get().say(
       count === 3
         ? "All three keys found! The ATTIC door at the end of the corridor is unlocked."
@@ -92,6 +94,7 @@ export const useKeysStore = create<KeysState>((set, get) => ({
   reset: () => {
     set({ collected: { ...EMPTY } });
     save({ ...EMPTY });
+    useHuntRunStore.getState().reset();
   },
 }));
 

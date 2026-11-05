@@ -9,7 +9,9 @@
     "lint": "eslint",
     "convert:fbx": "node scripts/convert-fbx.js",
     "test:scenes": "tsx scripts/smoke-test-scenes.ts",
-    "test:navigation": "tsx scripts/test-navigation.ts"
+    "test:navigation": "tsx scripts/test-navigation.ts",
+    "test:leaderboard": "tsx scripts/test-leaderboard.ts",
+    "test:hunt-run": "tsx scripts/test-hunt-run.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

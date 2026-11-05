@@ -44,6 +44,15 @@ keepsake about the projects still in progress.
   (procedural geometry and shaders; there are no heavy 3D model files)
 - **GSAP** — intro and camera transitions · **Zustand** — game state · **Tailwind CSS v4**
 - **AWS Amplify Hosting** — CI/CD from this repo, served through CloudFront
+- **Amazon API Gateway HTTP API + AWS Lambda + DynamoDB** — optional timed-hunt
+  leaderboard (`GET /scores`, `POST /scores`); the static site calls the API directly
+
+The attic leaderboard shows the ten fastest runs. Visitors choose whether to
+submit a display name (up to 20 characters) and their time; submitted names and
+times are public. The browser endpoint can be overridden at build time with
+`NEXT_PUBLIC_LEADERBOARD_API_URL`; the default points to this project's API.
+Because the API is public and the timer runs in the browser, scores are
+best-effort rather than cheat-proof.
 
 ### Why a static export?
 
