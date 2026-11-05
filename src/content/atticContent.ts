@@ -19,5 +19,8 @@ export const ATTIC = {
    "I'm building Mahi, a personal JARVIS-style AI agent, one layer at a time.",
 	"Outside of code, I'm building False Memory, a first-person psychological thriller I plan to publish.",  
 ],
+  rewardTitle: "There is always another level",
+  rewardStory:
+    "Two side quests are still in progress: Mahi, my personal JARVIS-style AI agent, and False Memory, a first-person psychological thriller I plan to publish.",
   cta: "Like what you found? Let's build something.",
 };

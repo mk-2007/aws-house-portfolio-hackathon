@@ -25,6 +25,17 @@ your progress, and the welcome screen tells you the hunt exists. Collect all
 three to unlock the vault at the end of the corridor.
 
 The hunt never blocks navigation: the four main rooms are always open.
+After unlocking the attic, click either brass trunk to reveal a final
+keepsake about the projects still in progress.
+
+## Game controls
+
+- Click a room door or use the directory bar to navigate.
+- In the corridor, use **WASD** or the arrow keys to walk and turn.
+- Drag the room-look dial or use **A/D** inside a room; right-drag anywhere
+  in the 3D scene to look around.
+- Use the **First person / Third person** button to switch camera views.
+- In third-person view, the character follows your movement through the house.
 
 ## Tech stack
 

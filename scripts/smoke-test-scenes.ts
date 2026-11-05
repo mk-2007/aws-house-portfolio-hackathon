@@ -101,6 +101,7 @@ async function main() {
   const { default: SkillsRoom } = await import("../src/components/scene/rooms/SkillsRoom");
   const { default: ProjectsRoom } = await import("../src/components/scene/rooms/ProjectsRoom");
   const { default: AboutRoom } = await import("../src/components/scene/rooms/AboutRoom");
+  const { default: AtticRoom } = await import("../src/components/scene/rooms/AtticRoom");
 
   let failures = 0;
 
@@ -112,6 +113,7 @@ async function main() {
     ["SkillsRoom", SkillsRoom],
     ["ProjectsRoom", ProjectsRoom],
     ["AboutRoom", AboutRoom],
+    ["AtticRoom", AtticRoom],
   ];
   for (const [name, Comp] of standalone) {
     const { result, errors } = await withErrorCapture(async () => {
@@ -140,6 +142,8 @@ async function main() {
     ["-> projects", ProjectsRoom],
     ["-> corridor", Corridor],
     ["-> about", AboutRoom],
+    ["-> corridor", Corridor],
+    ["-> attic", AtticRoom],
     ["-> corridor", Corridor],
   ];
   const { errors: seqErrors } = await withErrorCapture(async () => {

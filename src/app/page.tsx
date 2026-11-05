@@ -11,7 +11,9 @@ import AboutObjectOverlay from "@/components/hud/AboutObjectOverlay";
 import ClassicView from "@/components/classic/ClassicView";
 import SeoContent from "@/components/classic/SeoContent";
 import ViewToggle from "@/components/hud/ViewToggle";
+import CameraModeToggle from "@/components/hud/CameraModeToggle";
 import KeysHud from "@/components/hud/KeysHud";
+import AtticRewardOverlay from "@/components/hud/AtticRewardOverlay";
 import { useAppStore } from "@/store/appStore";
 import { useSpaceStore } from "@/store/spaceStore";
 
@@ -27,6 +29,7 @@ export default function Home() {
       <SeoContent />
       {view === "classic" && <ClassicView />}
       {view === "house" && <ViewToggle />}
+      {view === "house" && inHouse && <CameraModeToggle />}
       {view === "house" && inHouse && <KeysHud />}
       {stage === "welcome" && <SpaceGate />}
       {/* Corridor stays mounted the whole time — no reload when the
@@ -44,6 +47,7 @@ export default function Home() {
       {inHouse && <KeyboardControls />}
       <ProjectDetailOverlay />
       <AboutObjectOverlay />
+      {inHouse && space === "attic" && <AtticRewardOverlay />}
       <RenderErrorBanner />
     </main>
   );
